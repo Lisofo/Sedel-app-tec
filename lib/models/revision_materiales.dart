@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 import 'package:hive/hive.dart';
+
+import 'lote.dart';
+import 'metodo_aplicacion.dart';
 part 'revision_materiales.g.dart';
 
 RevisionMaterial revisionMaterialesFromMap(String str) => RevisionMaterial.fromJson(json.decode(str));
@@ -95,68 +98,4 @@ class RevisionMaterial extends HiveObject {
   }
 }
 
-class Lote {
-  late int materialLoteId;
-  late String lote;
 
-  Lote({
-    required this.materialLoteId,
-    required this.lote,
-  });
-
-  factory Lote.fromJson(Map<String, dynamic> json) => Lote(
-        materialLoteId: json["materialLoteId"] as int? ?? 0,
-        lote: json["lote"] as String? ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "materialLoteId": materialLoteId,
-        "lote": lote,
-      };
-
-  Lote.empty() {
-    materialLoteId = 0;
-    lote = '';
-  }
-
-  @override
-  String toString() {
-    return lote;
-  }
-}
-
-class MetodoAplicacion {
-  late int metodoAplicacionId;
-  late String codMetodoAplicacion;
-  late String descripcion;
-
-  MetodoAplicacion({
-    required this.metodoAplicacionId,
-    required this.codMetodoAplicacion,
-    required this.descripcion,
-  });
-
-  factory MetodoAplicacion.fromJson(Map<String, dynamic> json) =>
-      MetodoAplicacion(
-        metodoAplicacionId: json["metodoAplicacionId"] as int? ?? 0,
-        codMetodoAplicacion: json["codMetodoAplicacion"] as String? ?? '',
-        descripcion: json["descripcion"] as String? ?? '',
-      );
-
-  Map<String, dynamic> toMap() => {
-        "metodoAplicacionId": metodoAplicacionId,
-        "codMetodoAplicacion": codMetodoAplicacion,
-        "descripcion": descripcion,
-      };
-
-  MetodoAplicacion.empty() {
-    metodoAplicacionId = 0;
-    codMetodoAplicacion = '';
-    descripcion = '';
-  }
-
-  @override
-  String toString() {
-    return descripcion;
-  }
-}

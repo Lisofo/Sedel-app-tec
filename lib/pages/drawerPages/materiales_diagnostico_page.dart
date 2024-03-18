@@ -11,6 +11,9 @@ import 'package:app_tecnicos_sedel_wifiless/widgets/custom_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/lote.dart';
+import '../../models/metodo_aplicacion.dart';
+
 class MaterialesDiagnosticoPage extends StatefulWidget {
   const MaterialesDiagnosticoPage({super.key});
 

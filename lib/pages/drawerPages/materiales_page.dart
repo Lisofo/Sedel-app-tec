@@ -14,6 +14,9 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/lote.dart';
+import '../../models/metodo_aplicacion.dart';
+
 class MaterialesPage extends StatefulWidget {
   const MaterialesPage({super.key});
 

@@ -5,6 +5,8 @@ import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 
+import '../models/lote.dart';
+import '../models/metodo_aplicacion.dart';
 import 'boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';

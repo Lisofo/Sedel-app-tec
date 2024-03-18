@@ -10,6 +10,9 @@ import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../models/lote.dart';
+import '../models/metodo_aplicacion.dart';
+
 class MaterialesServices {
   final _dio = Dio();
   String apiUrl = Config.APIURL;

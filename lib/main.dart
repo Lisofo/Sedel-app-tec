@@ -1,3 +1,4 @@
+import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
-import 'models/observacion.dart';
-import 'models/revision_tarea.dart';
 import 'providers/orden_provider.dart';
 import 'offline/boxes.dart';
 
@@ -20,6 +19,9 @@ import 'models/servicio_ordenes.dart';
 import 'models/tecnico.dart';
 import 'models/tipo_cliente.dart';
 import 'models/tipo_orden.dart';
+import 'models/material.dart';
+import 'models/observacion.dart';
+import 'models/revision_tarea.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -36,13 +38,15 @@ Future<void> main() async {
   Hive.registerAdapter(RevisionPlagaAdapter());
   Hive.registerAdapter(RevisionTareaAdapter());
   Hive.registerAdapter(ObservacionAdapter());
+  Hive.registerAdapter(MaterialesAdapter());
+  Hive.registerAdapter(RevisionMaterialAdapter());
 
   ordenes = await Hive.openBox<Orden>('ordenBox');
-  
+  ordenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
-  
+  codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
-  
+  revisiones.clear(); 
 
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(

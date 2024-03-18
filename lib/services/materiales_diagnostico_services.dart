@@ -10,6 +10,9 @@ import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../models/lote.dart';
+import '../models/metodo_aplicacion.dart';
+
 class MaterialesDiagnosticoServices {
   final _dio = Dio();
   String apiUrl = Config.APIURL;

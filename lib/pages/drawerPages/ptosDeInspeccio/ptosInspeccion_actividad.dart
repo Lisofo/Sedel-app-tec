@@ -3,7 +3,6 @@
 import 'package:app_tecnicos_sedel_wifiless/models/materiales_tpi.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga_xtpi.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea_xtpi.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
@@ -14,6 +13,8 @@ import 'package:app_tecnicos_sedel_wifiless/services/tareas_services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
+
+import '../../../models/lote.dart';
 
 class PtosInspeccionActividad extends StatefulWidget {
   const PtosInspeccionActividad({super.key});
