@@ -1,3 +1,5 @@
+import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
@@ -24,6 +26,18 @@ import 'models/observacion.dart';
 import 'models/revision_tarea.dart';
 
 Future<void> main() async {
+  await cargarHive(); 
+
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(ChangeNotifierProvider(
+    create: (_) => OrdenProvider(),
+    child: const MyApp(),
+  ));
+}
+
+Future<void> cargarHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(OrdenAdapter());
   Hive.registerAdapter(TipoOrdenAdapter());
@@ -40,21 +54,15 @@ Future<void> main() async {
   Hive.registerAdapter(ObservacionAdapter());
   Hive.registerAdapter(MaterialesAdapter());
   Hive.registerAdapter(RevisionMaterialAdapter());
-
+  Hive.registerAdapter(LoteAdapter());
+  Hive.registerAdapter(MetodoAplicacionAdapter());
+  
   ordenes = await Hive.openBox<Orden>('ordenBox');
   ordenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
   codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
   revisiones.clear(); 
-
-  WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(ChangeNotifierProvider(
-    create: (_) => OrdenProvider(),
-    child: const MyApp(),
-  ));
 }
 
 class MyApp extends StatelessWidget {
