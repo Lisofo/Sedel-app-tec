@@ -42,11 +42,11 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
 
     if(isConnected){
       observaciones = await RevisionServices().getObservacion(orden, observacion, token);
-      if(revisiones.values.whereType<Observacion>().toList().isEmpty){
-        for(int i = 0; i<observaciones.length; i++){
-          addToBoxRevisiones(null, null, observaciones[i],null);
-        }
-      }
+      // if(revisiones.values.whereType<Observacion>().toList().isEmpty){
+      //   for(int i = 0; i<observaciones.length; i++){
+      //     addToBoxRevisiones(null, null, observaciones[i],null);
+      //   }
+      // }
     if (observaciones.isNotEmpty) {
       observacion = observaciones[0];
     } else {

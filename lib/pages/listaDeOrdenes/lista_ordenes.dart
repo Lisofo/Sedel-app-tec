@@ -64,12 +64,18 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
     tecnicoId = context.read<OrdenProvider>().tecnicoId;
     if(isConnected){
       ordenes = await ordenServices.getOrden(tecnicoId.toString(), opcionActual, opcionActual, token);
-      if(boxOrdenes.values.isEmpty){
-        for(int i = 0; i<ordenes.length; i++){
+      for(int i = 0; i<ordenes.length; i++){
+        bool encontrado = false;
+        for(int j = 0; j<boxOrdenes.length; j++){
+          if(ordenes[i].ordenTrabajoId == boxOrdenes.getAt(j).ordenTrabajoId){
+            encontrado = true;
+          }
+        }
+        if(!encontrado){
           addOrdenesToBox(ordenes[i]);
         }
       }
-    }else{
+    } else {
       ordenes = await ordenServices.getOrdenesOffline();
     }
     Provider.of<OrdenProvider>(context, listen: false).setOrdenes(ordenes);

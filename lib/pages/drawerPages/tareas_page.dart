@@ -57,11 +57,11 @@ class _TareasPageState extends State<TareasPage> {
           addListasToBoxCodiguera(null, tareas[i], null, null, null);
         }
       }
-      if(revisiones.values.whereType<RevisionTarea>().toList().isEmpty){
-        for(int i = 0; i<revisionTareasList.length; i++){
-          addToBoxRevisiones(null, revisionTareasList[i], null, null);
-        }
-      }
+      // if(revisiones.values.whereType<RevisionTarea>().toList().isEmpty){
+      //   for(int i = 0; i<revisionTareasList.length; i++){
+      //     addToBoxRevisiones(null, revisionTareasList[i], null, null);
+      //   }
+      // }
     }else{
       tareas = await TareasServices().getTareasOffline();
       revisionTareasList = await RevisionServices().getRevisionTareasOffline(orden);

@@ -1,5 +1,6 @@
 import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
@@ -56,13 +57,14 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(RevisionMaterialAdapter());
   Hive.registerAdapter(LoteAdapter());
   Hive.registerAdapter(MetodoAplicacionAdapter());
+  Hive.registerAdapter(RevisionAdapter());
   
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
   // boxOrdenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
   // codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
-  // revisiones.clear(); 
+  revisiones.clear();
 }
 
 class MyApp extends StatelessWidget {

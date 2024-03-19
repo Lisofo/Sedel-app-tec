@@ -1,8 +1,5 @@
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/observacion.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/revision_tarea.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 
 import '../models/lote.dart';
@@ -35,20 +32,7 @@ Future<void> addListasToBoxCodiguera(
   
 }
 
-Future<void> addToBoxRevisiones(
-  RevisionPlaga? revisionPlaga, RevisionTarea? revisionTarea, Observacion? observacion, RevisionMaterial? revisionMaterial) async{
-  if(revisionPlaga != null){
-    await revisiones.add(revisionPlaga);
-  }
-  if(revisionTarea != null){
-    await revisiones.add(revisionTarea);
-  }
-  if(observacion != null){
-    await revisiones.add(observacion);
-  }
-  if(revisionMaterial != null){
-    await revisiones.add(revisionMaterial);
-  }
-
+Future<void> addToBoxRevisiones(Revision revision) async{
+  revisiones.put('Key: ${revision.otOrdenId}', revision);
 }
 

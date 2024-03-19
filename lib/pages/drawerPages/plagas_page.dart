@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, void_checks
 
+import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/grado_infestacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
@@ -83,11 +84,11 @@ class _PlagasPageState extends State<PlagasPage> {
           addListasToBoxCodiguera(plagas[i], null, null, null, null);
         }
       }
-      if(revisiones.values.whereType<RevisionPlaga>().toList().isEmpty){
-        for(int i = 0; i<revisionPlagasList.length; i++){
-          addToBoxRevisiones(revisionPlagasList[i], null, null, null);
-        }
-      }
+      // if(revisiones.values.whereType<RevisionPlaga>().toList().isEmpty){
+      //   for(int i = 0; i<revisionPlagasList.length; i++){
+      //     addToBoxRevisiones(revisionPlagasList[i], null, null, null);
+      //   }
+      // }
       
       
     }else{
@@ -260,8 +261,7 @@ class _PlagasPageState extends State<PlagasPage> {
                                   border: Border(bottom: BorderSide())),
                               child: ListTile(
                                 title: Text(revisionPlagasList[index].plaga),
-                                subtitle: Text(
-                                    revisionPlagasList[index].gradoInfestacion),
+                                subtitle: Text(revisionPlagasList[index].gradoInfestacion),
                                 trailing: IconButton(
                                     onPressed: () async {
                                       if(marcaId == 0){
@@ -275,13 +275,10 @@ class _PlagasPageState extends State<PlagasPage> {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: const Text("Confirmar"),
-                                              content: const Text(
-                                                  "¿Estas seguro de querer borrar la plaga?"),
+                                              content: Text("¿Estas seguro de querer borrar la plaga ${revisionPlagasList[index].plaga}?"),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(false),
+                                                  onPressed: () => Navigator.of(context).pop(false),
                                                   child: const Text("CANCELAR"),
                                                 ),
                                                 TextButton(
@@ -326,11 +323,11 @@ class _PlagasPageState extends State<PlagasPage> {
     bool isConnected = await _checkConnectivity();
     if(isConnected){
       await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[index], token);
-      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[index].otPlagaId);
+      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[index]);
     }else{
-      await RevisionServices().deleteRevisionPlagaOffline(index);
+      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[index]);
     }
-
+    router.pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('La plaga ${revisionPlagasList[index].plaga} ha sido borrada'),
@@ -358,9 +355,9 @@ class _PlagasPageState extends State<PlagasPage> {
 
     if(isConnected){
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
-      await addToBoxRevisiones(nuevaPlaga, null, null, null);
+      //await addToBoxRevisiones(nuevaPlaga, null, null, null);
     }else{
-      addToBoxRevisiones(nuevaPlaga, null, null, null);
+     // addToBoxRevisiones(nuevaPlaga, null, null, null);
     }
     revisionPlagasList.add(nuevaPlaga);
     _scrollController.animateTo(

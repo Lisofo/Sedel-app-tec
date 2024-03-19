@@ -361,12 +361,11 @@ class RevisionServices {
     }
   }
   
-  Future deleteRevisionPlagaOffline(int id) async {
-    final plagaAEliminar = revisiones.values.whereType<RevisionPlaga>().firstWhere((plaga) => plaga.otPlagaId == id);
-    revisiones.delete(plagaAEliminar.key);
+  Future deleteRevisionPlagaOffline(RevisionPlaga revisionPlaga) async {
+   
+    revisiones.delete(revisionPlaga.key);
     print('Plaga eliminada con éxito');
  
-    router.pop();
   }
 
   Future postRevisionPlaga(BuildContext context, Orden orden, RevisionPlaga revisionPlaga, String token) async {

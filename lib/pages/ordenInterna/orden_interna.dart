@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/ubicacion.dart';
+import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/orden_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/ubicacion_services.dart';
@@ -30,6 +32,7 @@ class _OrdenInternaState extends State<OrdenInterna> {
   late Ubicacion ubicacion = Ubicacion.empty();
   bool ejecutando = false;
   String token = '';
+  late Revision revision = Revision.empty();
 
   @override
   void initState() {
@@ -345,6 +348,7 @@ class _OrdenInternaState extends State<OrdenInterna> {
           color: Colors.green,
         ),
         onTap: () {
+          Provider.of<OrdenProvider>(context, listen: false).setRevisionOrden;
           router.push(opt['ruta']);
         },
       );
@@ -369,10 +373,12 @@ class _OrdenInternaState extends State<OrdenInterna> {
       await OrdenServices().patchOrden(context, orden, estado, ubicacionId, token);
       if (estado == 'EN PROCESO') {
         await RevisionServices().postRevision(uId, orden, token);
+        revision.otOrdenId = orden.ordenTrabajoId;
+        revision.otRevisionId = orden.otRevisionId;
+        addToBoxRevisiones(revision);
       }
       setState(() {});
 
-      print('hola entrada');
       ejecutando = false;
     }
   }

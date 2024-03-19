@@ -66,11 +66,11 @@ class _MaterialesPageState extends State<MaterialesPage> {
           addListasToBoxCodiguera(null, null, materiales[i], null, null);
         }
       }
-      if(revisiones.values.whereType<RevisionMaterial>().toList().isEmpty){
-        for(int i = 0; i<revisionMaterialesList.length; i++){
-          addToBoxRevisiones(null, null, null, revisionMaterialesList[i]);
-        }
-      }
+      // if(revisiones.values.whereType<RevisionMaterial>().toList().isEmpty){
+      //   for(int i = 0; i<revisionMaterialesList.length; i++){
+      //     addToBoxRevisiones(null, null, null, revisionMaterialesList[i]);
+      //   }
+      // }
       for(int i = 0; i < lotes.length; i++){
         addListasToBoxCodiguera(null, null, null, lotes[i], null);
       }

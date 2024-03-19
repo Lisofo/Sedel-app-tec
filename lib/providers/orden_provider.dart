@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ class OrdenProvider with ChangeNotifier {
   String _modo = '';
   int _tecnicoId = 0;
   List<Orden> ordenesEnProceso = [];
+  Revision _revision = Revision.empty();
 
   Orden get orden => _orden;
   String get menu => _menu;
@@ -46,6 +48,12 @@ class OrdenProvider with ChangeNotifier {
   RevisionPtoInspeccion get revisionPtoInspeccion => _revisionPtoInspeccion;
   String get modo => _modo;
   int get tecnicoId => _tecnicoId;
+  Revision get revision => _revision;
+  
+  void setRevisionOrden(Revision revision) {
+    _revision = revision;
+    notifyListeners();
+  }
 
   void setPendiente(bool pendi) {
     _pendientes = pendi;
