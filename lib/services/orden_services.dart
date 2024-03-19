@@ -2,6 +2,7 @@
 
 import 'package:app_tecnicos_sedel_wifiless/config/config.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -78,6 +79,12 @@ class OrdenServices {
       print(e.error);
       print(e.response);
     }
+  }
+
+  Future<List<Orden>> getOrdenesOffline() async {
+    List<Orden> ordenesOffline = [];
+    ordenesOffline = boxOrdenes.values.whereType<Orden>().toList();
+    return ordenesOffline;
   }
 
   Future patchOrden(BuildContext context, Orden orden, String estado,

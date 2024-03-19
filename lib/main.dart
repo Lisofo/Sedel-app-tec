@@ -57,12 +57,12 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(LoteAdapter());
   Hive.registerAdapter(MetodoAplicacionAdapter());
   
-  ordenes = await Hive.openBox<Orden>('ordenBox');
-  ordenes.clear();
+  boxOrdenes = await Hive.openBox<Orden>('ordenBox');
+  // boxOrdenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
-  codigueras.clear();
+  // codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
-  revisiones.clear(); 
+  // revisiones.clear(); 
 }
 
 class MyApp extends StatelessWidget {

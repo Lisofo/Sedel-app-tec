@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
+import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/orden_services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -57,17 +59,28 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
   }
 
   cargarDatos() async {
+    bool isConnected = await _checkConnectivity();
     token = context.read<OrdenProvider>().token;
     tecnicoId = context.read<OrdenProvider>().tecnicoId;
-    ordenes = await ordenServices.getOrden(tecnicoId.toString(), opcionActual, opcionActual, token);
-    for(int i = 0; i<ordenes.length; i++){
-      addOrdenesToBox(ordenes[i]);
+    if(isConnected){
+      ordenes = await ordenServices.getOrden(tecnicoId.toString(), opcionActual, opcionActual, token);
+      if(boxOrdenes.values.isEmpty){
+        for(int i = 0; i<ordenes.length; i++){
+          addOrdenesToBox(ordenes[i]);
+        }
+      }
+    }else{
+      ordenes = await ordenServices.getOrdenesOffline();
     }
     Provider.of<OrdenProvider>(context, listen: false).setOrdenes(ordenes);
 
     setState(() {});
   }
 
+  Future<bool> _checkConnectivity() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
   String opcionActual = fechas[0];
   @override
   Widget build(BuildContext context) {

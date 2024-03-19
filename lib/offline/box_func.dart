@@ -12,7 +12,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 
 Future<void> addOrdenesToBox(Orden orden) async {
-  await ordenes.add(orden);
+  await boxOrdenes.add(orden);
 }
 
 Future<void> addListasToBoxCodiguera(

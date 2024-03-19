@@ -323,37 +323,45 @@ class _PlagasPageState extends State<PlagasPage> {
   }
 
   Future<void> borrarPlaga(BuildContext context, int index) async {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(
-      content: Text('La plaga ${revisionPlagasList[index].plaga} ha sido borrada'),
-    ));
-    await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[index], token);
+    bool isConnected = await _checkConnectivity();
+    if(isConnected){
+      await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[index], token);
+      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[index].otPlagaId);
+    }else{
+      await RevisionServices().deleteRevisionPlagaOffline(index);
+    }
 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('La plaga ${revisionPlagasList[index].plaga} ha sido borrada'),
+      )
+    );
     setState(() {
       revisionPlagasList.removeAt(index);
     });
-    
   }
 
   Future<void> posteoRevisionPlaga(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
     var nuevaPlaga = RevisionPlaga(
-        otPlagaId: 0,
-        ordenTrabajoId: orden.ordenTrabajoId,
-        otRevisionId: orden.otRevisionId,
-        comentario: '',
-        plagaId: selectedPlaga.plagaId,
-        codPlaga: selectedPlaga.codPlaga,
-        plaga: selectedPlaga.descripcion,
-        gradoInfestacionId: selectedGrado.gradoInfestacionId,
-        codGradoInfestacion: selectedGrado.codGradoInfestacion,
-        gradoInfestacion: selectedGrado.descripcion);
-    await RevisionServices().postRevisionPlaga(
-        context,
-        orden,
-        selectedPlaga.plagaId,
-        selectedGrado.gradoInfestacionId,
-        nuevaPlaga,
-        token);
+      otPlagaId: 0,
+      ordenTrabajoId: orden.ordenTrabajoId,
+      otRevisionId: orden.otRevisionId,
+      comentario: '',
+      plagaId: selectedPlaga.plagaId,
+      codPlaga: selectedPlaga.codPlaga,
+      plaga: selectedPlaga.descripcion,
+      gradoInfestacionId: selectedGrado.gradoInfestacionId,
+      codGradoInfestacion: selectedGrado.codGradoInfestacion,
+      gradoInfestacion: selectedGrado.descripcion
+    );
+
+    if(isConnected){
+      await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
+      await addToBoxRevisiones(nuevaPlaga, null, null, null);
+    }else{
+      addToBoxRevisiones(nuevaPlaga, null, null, null);
+    }
     revisionPlagasList.add(nuevaPlaga);
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,

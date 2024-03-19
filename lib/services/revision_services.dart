@@ -360,13 +360,20 @@ class RevisionServices {
       }
     }
   }
+  
+  Future deleteRevisionPlagaOffline(int id) async {
+    final plagaAEliminar = revisiones.values.whereType<RevisionPlaga>().firstWhere((plaga) => plaga.otPlagaId == id);
+    revisiones.delete(plagaAEliminar.key);
+    print('Plaga eliminada con éxito');
+ 
+    router.pop();
+  }
 
-  Future postRevisionPlaga(BuildContext context, Orden orden, int plagaId,
-      int gradoInfestacionId, RevisionPlaga revisionPlaga, String token) async {
+  Future postRevisionPlaga(BuildContext context, Orden orden, RevisionPlaga revisionPlaga, String token) async {
     String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/plagas';
     var data = ({
-      "idPlaga": plagaId,
-      "idGradoInfestacion": gradoInfestacionId,
+      "idPlaga": revisionPlaga.plagaId,
+      "idGradoInfestacion": revisionPlaga.gradoInfestacionId,
       "comentario": ""
     });
 
@@ -406,8 +413,7 @@ class RevisionServices {
     }
   }
 
-  Future postRevisonFirma(BuildContext context, Orden orden, ClienteFirma firma,
-      String token) async {
+  Future postRevisonFirma(BuildContext context, Orden orden, ClienteFirma firma, String token) async {
     String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/firmas';
 
     var data = firma.toMap();
@@ -470,8 +476,7 @@ class RevisionServices {
     }
   }
 
-  Future deleteRevisionFirma(BuildContext context, Orden orden,
-      ClienteFirma revisionFirma, String token) async {
+  Future deleteRevisionFirma(BuildContext context, Orden orden, ClienteFirma revisionFirma, String token) async {
     String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/firmas/${revisionFirma.otFirmaId}';
     try {
       var headers = {'Authorization': token};
@@ -505,11 +510,9 @@ class RevisionServices {
     }
   }
 
-  Future putRevisionFirma(BuildContext context, Orden orden,
-      ClienteFirma revisionFirma, String token) async {
+  Future putRevisionFirma(BuildContext context, Orden orden, ClienteFirma revisionFirma, String token) async {
     String link = apiLink;
-    link +=
-        'api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId.toString()}/firmas/${revisionFirma.otFirmaId}';
+    link += 'api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId.toString()}/firmas/${revisionFirma.otFirmaId}';
     var data = ({
       "nombre": revisionFirma.nombre,
       "area": revisionFirma.area,
@@ -545,4 +548,5 @@ class RevisionServices {
       }
     }
   }
+
 }
