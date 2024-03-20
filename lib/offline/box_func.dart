@@ -33,6 +33,5 @@ Future<void> addListasToBoxCodiguera(
 }
 
 Future<void> addToBoxRevisiones(Revision revision) async{
-  revisiones.put('Key: ${revision.otOrdenId}', revision);
+  revisiones.put('${revision.otOrdenId}', revision);
 }
-

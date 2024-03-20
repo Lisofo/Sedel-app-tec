@@ -2,7 +2,10 @@
 
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
+import 'package:app_tecnicos_sedel_wifiless/services/materiales_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/orden_services.dart';
+import 'package:app_tecnicos_sedel_wifiless/services/ptos_services.dart';
+import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +36,8 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
   int groupValue = 0;
   List trabajodres = [];
   // 1. Agrega una clave global para el RefreshIndicator
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+  bool cargando = false;
 
   List<Orden> get ordenesFiltradas {
     if (groupValue == 0) {
@@ -59,6 +62,7 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
   }
 
   cargarDatos() async {
+    setState(() {});
     bool isConnected = await _checkConnectivity();
     token = context.read<OrdenProvider>().token;
     tecnicoId = context.read<OrdenProvider>().tecnicoId;
@@ -79,6 +83,22 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
       ordenes = await ordenServices.getOrdenesOffline();
     }
     Provider.of<OrdenProvider>(context, listen: false).setOrdenes(ordenes);
+    
+    for(int i = 0; i<ordenes.length; i++){
+      cargando = true;
+      if(ordenes[i].otRevisionId != 0){
+        ordenes[i].revision.otRevisionId = ordenes[i].otRevisionId;
+        ordenes[i].revision.otOrdenId = ordenes[i].ordenTrabajoId;
+        ordenes[i].revision.revisionPlaga = await RevisionServices().getRevisionPlagas(ordenes[i], token);
+        ordenes[i].revision.revisionTarea = await RevisionServices().getRevisionTareas(ordenes[i], token);
+        ordenes[i].revision.revisionMaterial = await MaterialesServices().getRevisionMateriales(ordenes[i], token);
+        ordenes[i].revision.revisionObservacion = await RevisionServices().getObservacion(ordenes[i], token);
+        // ordenes[i].revision.revisionFirma = await RevisionServices().getRevisionFirmas(ordenes[i], token);
+        ordenes[i].revision.revisionPtoInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, ordenes[i], token);
+        addToBoxRevisiones(ordenes[i].revision);
+      }
+    }
+    cargando = false; 
 
     setState(() {});
   }
@@ -195,7 +215,7 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
               child: RefreshIndicator(
                 key: _refreshIndicatorKey,
                 onRefresh: _refreshData,
-                child: ListView.builder(
+                child: cargando ? const Center(child: CircularProgressIndicator()) : ListView.builder(
                   itemCount: ordenesFiltradas.length,
                   itemBuilder: (context, i) {
                     return Card(

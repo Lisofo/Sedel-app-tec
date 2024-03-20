@@ -10,8 +10,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../offline/box_func.dart';
-
 class ObservacionesPage extends StatefulWidget {
   const ObservacionesPage({super.key});
 
@@ -41,7 +39,7 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
     marcaId = context.read<OrdenProvider>().marcaId;
 
     if(isConnected){
-      observaciones = await RevisionServices().getObservacion(orden, observacion, token);
+      observaciones = await RevisionServices().getObservacion(orden, token);
       // if(revisiones.values.whereType<Observacion>().toList().isEmpty){
       //   for(int i = 0; i<observaciones.length; i++){
       //     addToBoxRevisiones(null, null, observaciones[i],null);
@@ -94,9 +92,8 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                      color: const Color.fromARGB(255, 52, 120, 62), width: 2),
+                    color: const Color.fromARGB(255, 52, 120, 62), width: 2),
                   borderRadius: BorderRadius.circular(5),
-                  // color: Colors.white
                 ),
                 child: TextFormField(
                   controller: observacionController,

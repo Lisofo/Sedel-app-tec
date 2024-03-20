@@ -85,10 +85,8 @@ class PtosInspeccionServices {
     }
   }
 
-  Future getPtosInspeccion(
-      BuildContext context, Orden orden, String token) async {
-    String link =
-        '${apiUrl}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/puntos/acciones/';
+  Future getPtosInspeccion(BuildContext context, Orden orden, String token) async {
+    String link = '${apiUrl}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/puntos/acciones/';
 
     try {
       var headers = {'Authorization': token};

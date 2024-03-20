@@ -1,14 +1,20 @@
 import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pto_accion.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pto_material.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pto_plaga.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pto_tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
+import 'models/traslado_nuevo.dart';
 import 'providers/orden_provider.dart';
 import 'offline/boxes.dart';
 
@@ -58,11 +64,17 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(LoteAdapter());
   Hive.registerAdapter(MetodoAplicacionAdapter());
   Hive.registerAdapter(RevisionAdapter());
+  Hive.registerAdapter(RevisionPtoInspeccionAdapter());
+  Hive.registerAdapter(TrasladoNuevoAdapter());
+  Hive.registerAdapter(PtoMaterialAdapter());
+  Hive.registerAdapter(PtoPlagaAdapter());
+  Hive.registerAdapter(PtoTareaAdapter());
+  Hive.registerAdapter(PtoAccionAdapter());
   
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
-  // boxOrdenes.clear();
+  boxOrdenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
-  // codigueras.clear();
+  //codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
   revisiones.clear();
 }

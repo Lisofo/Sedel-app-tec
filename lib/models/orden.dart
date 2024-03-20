@@ -1,6 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:hive/hive.dart';
 
 import 'cliente.dart';
@@ -42,6 +43,8 @@ class Orden extends HiveObject {
   late int otRevisionId;
   @HiveField(12)
   late int planoId;
+  @HiveField(13)
+  late Revision revision;
 
   Orden({
     required this.ordenTrabajoId,
@@ -57,6 +60,7 @@ class Orden extends HiveObject {
     required this.servicio,
     required this.otRevisionId,
     required this.planoId,
+    required this.revision,
   });
 
   factory Orden.fromJson(Map<String, dynamic> json) => Orden(
@@ -70,10 +74,10 @@ class Orden extends HiveObject {
         tipoOrden: TipoOrden.fromMap(json["tipoOrden"]),
         cliente: Cliente.fromJson(json["cliente"]),
         tecnico: Tecnico.fromJson(json["tecnico"]),
-        servicio: List<ServicioOrdenes>.from(
-            json["servicios"].map((x) => ServicioOrdenes.fromJson(x))),
+        servicio: List<ServicioOrdenes>.from(json["servicios"].map((x) => ServicioOrdenes.fromJson(x))),
         otRevisionId: json["otRevisionId"] as int? ?? 0,
         planoId: json["planoId"] as int? ?? 0,
+        revision: Revision.empty()
       );
 
   Map<String, dynamic> toMap() => {
@@ -104,5 +108,6 @@ class Orden extends HiveObject {
     tecnico = Tecnico.empty();
     otRevisionId = 0;
     planoId = 0;
+    revision = Revision.empty();
   }
 }

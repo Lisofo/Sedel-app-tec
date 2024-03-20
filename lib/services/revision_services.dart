@@ -5,6 +5,7 @@ import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/clientes_firmas.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/observacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
@@ -158,10 +159,9 @@ class RevisionServices {
     }
   }
 
-  Future getObservacion(Orden orden, Observacion obs, String token) async {
+  Future getObservacion(Orden orden, String token) async {
     String link = apiLink;
-    link +=
-        'api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId.toString()}/observaciones';
+    link += 'api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/observaciones';
 
     try {
       var headers = {'Authorization': token};
@@ -173,8 +173,7 @@ class RevisionServices {
         ),
       );
       final List observacionList = resp.data;
-      var retorno =
-          observacionList.map((e) => Observacion.fromJson(e)).toList();
+      var retorno = observacionList.map((e) => Observacion.fromJson(e)).toList();
 
       return retorno;
     } catch (e) {
@@ -317,13 +316,13 @@ class RevisionServices {
     }
   }
 
-  Future<List<RevisionPlaga>> getRevisionPlagasOffline(Orden orden) async {
-    List<RevisionPlaga> listaRevisionPlagasOffline = [];
+  // Future<List<RevisionPlaga>> getRevisionPlagasOffline(Orden orden) async {
+  //   List<RevisionPlaga> listaRevisionPlagasOffline = [];
 
-    listaRevisionPlagasOffline = revisiones.values.whereType<RevisionPlaga>().where((revisionPlaga) => revisionPlaga.otRevisionId == orden.otRevisionId).toList();
-    print(listaRevisionPlagasOffline.length);
-    return listaRevisionPlagasOffline;
-  }
+  //   listaRevisionPlagasOffline = revisiones.values.whereType<RevisionPlaga>().where((revisionPlaga) => revisionPlaga.otRevisionId == orden.otRevisionId).toList();
+  //   print(listaRevisionPlagasOffline.length);
+  //   return listaRevisionPlagasOffline;
+  // }
 
   Future deleteRevisionPlaga(BuildContext context, Orden orden, RevisionPlaga revisionPlaga, String token) async {
 
@@ -338,7 +337,11 @@ class RevisionServices {
         ),
       );
       if (resp.statusCode == 204) {
-        // showDialogs(context, 'Plaga borrada', true, false);
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('La plaga ${revisionPlaga.plaga} ha sido borrada'),
+        )
+    );
         router.pop(context);
       }
     } catch (e) {
@@ -361,9 +364,9 @@ class RevisionServices {
     }
   }
   
-  Future deleteRevisionPlagaOffline(RevisionPlaga revisionPlaga) async {
-   
-    revisiones.delete(revisionPlaga.key);
+  Future deleteRevisionPlagaOffline(RevisionPlaga revisionPlaga, Orden orden) async {
+    Revision revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    revision.revisionPlaga.removeWhere((plaga) => plaga.plagaId == revisionPlaga.plagaId);
     print('Plaga eliminada con éxito');
  
   }

@@ -348,7 +348,7 @@ class _OrdenInternaState extends State<OrdenInterna> {
           color: Colors.green,
         ),
         onTap: () {
-          Provider.of<OrdenProvider>(context, listen: false).setRevisionOrden;
+          Provider.of<OrdenProvider>(context, listen: false).setRevisionOrden(revision);
           router.push(opt['ruta']);
         },
       );
@@ -430,13 +430,11 @@ class _OrdenInternaState extends State<OrdenInterna> {
                       ejecutando = true;
                       await obtenerUbicacion();
                       int ubicacionId = ubicacion.ubicacionId;
-                      await OrdenServices().patchOrden(
-                          context, orden, 'PENDIENTE', ubicacionId, token);
+                      await OrdenServices().patchOrden(context, orden, 'PENDIENTE', ubicacionId, token);
                       setState(() {});
                       ejecutando = false;
                     }
-                    await OrdenServices.showDialogs(
-                        context, 'Estado cambiado a Pendiente', true, true);
+                    await OrdenServices.showDialogs(context, 'Estado cambiado a Pendiente', true, true);
                     setState(() {});
                   },
                   child: const Text('Confirmar'))

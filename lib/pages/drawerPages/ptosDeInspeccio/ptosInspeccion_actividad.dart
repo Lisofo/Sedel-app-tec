@@ -15,6 +15,9 @@ import 'package:provider/provider.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
 
 import '../../../models/lote.dart';
+import '../../../models/pto_material.dart';
+import '../../../models/pto_plaga.dart';
+import '../../../models/pto_tarea.dart';
 
 class PtosInspeccionActividad extends StatefulWidget {
   const PtosInspeccionActividad({super.key});
