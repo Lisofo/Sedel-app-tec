@@ -352,10 +352,10 @@ class _PlagasPageState extends State<PlagasPage> {
     if(isConnected){
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
+      revisionPlagasList.add(nuevaPlaga);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
     }
-    revisionPlagasList.add(nuevaPlaga);
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
       duration: const Duration(milliseconds: 500),
