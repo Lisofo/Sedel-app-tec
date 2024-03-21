@@ -208,14 +208,6 @@ class RevisionServices {
       print(e);
     }
   }
-  
-  Future<List<RevisionTarea>> getRevisionTareasOffline(Orden orden) async {
-    List<RevisionTarea> listaRevisionTareasOffline = [];
-
-    listaRevisionTareasOffline = revisiones.values.whereType<RevisionTarea>().where((revisionTarea) => revisionTarea.otRevisionId == orden.otRevisionId).toList();
-    print(listaRevisionTareasOffline.length);
-    return listaRevisionTareasOffline;
-  }
 
   Future postRevisionTarea(BuildContext context, Orden orden, int tareaId,
       RevisionTarea revisionTarea, String token) async {
@@ -294,6 +286,12 @@ class RevisionServices {
     }
   }
 
+  Future deleteRevisionTareaOffline(RevisionTarea revisionTarea, Orden orden) async {
+    Revision revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    revision.revisionTarea.removeWhere((tarea) => tarea.tareaId == revisionTarea.tareaId);
+    print('Plaga eliminada con éxito');
+  }
+
   Future getRevisionPlagas(Orden orden, String token) async {
     String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/plagas';
 
@@ -326,7 +324,7 @@ class RevisionServices {
 
   Future deleteRevisionPlaga(BuildContext context, Orden orden, RevisionPlaga revisionPlaga, String token) async {
 
-    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/plagas/${revisionPlaga.otPlagaId}';
+    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/plagas/${revisionPlaga.otPlagaId}';
     try {
       var headers = {'Authorization': token};
       var resp = await _dio.request(

@@ -10,6 +10,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/revision.dart';
+
 class ObservacionesPage extends StatefulWidget {
   const ObservacionesPage({super.key});
 
@@ -25,7 +27,8 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
   late String token = '';
   late List<Observacion> observaciones = [];
   late int marcaId = 0;
-
+  late Revision revision = Revision.empty();
+  
   @override
   void initState() {
     super.initState();
@@ -37,30 +40,28 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
     orden = context.read<OrdenProvider>().orden;
     token = context.read<OrdenProvider>().token;
     marcaId = context.read<OrdenProvider>().marcaId;
-
+    revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     if(isConnected){
       observaciones = await RevisionServices().getObservacion(orden, token);
-      // if(revisiones.values.whereType<Observacion>().toList().isEmpty){
-      //   for(int i = 0; i<observaciones.length; i++){
-      //     addToBoxRevisiones(null, null, observaciones[i],null);
-      //   }
-      // }
+      if(orden.revision.revisionObservacion.isEmpty){
+        for (var obs in observaciones) {
+          orden.revision.revisionObservacion.add(obs);
+        }
+      }
     if (observaciones.isNotEmpty) {
       observacion = observaciones[0];
     } else {
       observacion = Observacion.empty();
     }
     }else{
-      if(revisiones.values.whereType<Observacion>().toList().isNotEmpty){
-        observacion = revisiones.values.whereType<Observacion>().first;
+      if(revision.revisionObservacion.isNotEmpty){
+        observacion = revision.revisionObservacion[0];
       }
       else{
         observacion = Observacion.empty();
       }
     }
 
-    
-    print(observacion.otObservacionId);
     setState(() {
       observacionController.text = observacion.observacion;
       comentarioInternoController.text = observacion.comentarioInterno; 
@@ -159,14 +160,18 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
   }
 
   guardarObservaciones() async {
+    bool isConnected = await _checkConnectivity();
     observacion.comentarioInterno = comentarioInternoController.text;
     observacion.observacion = observacionController.text;
     observacion.obsRestringida = observacionController.text;
-
-    if (observacion.otObservacionId == 0) {
-      await RevisionServices().postObservacion(context, orden, observacion, token);
-    } else {
-      await RevisionServices().putObservacion(context, orden, observacion, token);
+    if(isConnected){
+      if (observacion.otObservacionId == 0) {
+        revision.revisionObservacion[0] = observacion;
+        await RevisionServices().postObservacion(context, orden, observacion, token);
+      } else {
+        await RevisionServices().putObservacion(context, orden, observacion, token);
+      }
     }
+    
   }
 }

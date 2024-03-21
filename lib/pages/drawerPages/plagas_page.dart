@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, void_checks
+import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/grado_infestacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
@@ -226,12 +227,7 @@ class _PlagasPageState extends State<PlagasPage> {
                                             ),
                                             onPressed: () async {
                                               Navigator.of(context).pop(true);
-                                              await RevisionServices()
-                                                  .deleteRevisionPlaga(
-                                                      context,
-                                                      orden,
-                                                      revisionPlagasList[index],
-                                                      token);
+                                              await RevisionServices().deleteRevisionPlaga(context,orden,revisionPlagasList[index],token);
                                             },
                                             child: const Text("BORRAR")),
                                       ],
@@ -326,11 +322,15 @@ class _PlagasPageState extends State<PlagasPage> {
       await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[i], token);
     }else{
       await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[i], orden);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('La plaga ${revisionPlagasList[i].plaga} ha sido borrada'),
+        )
+      );  
+      router.pop(context);
     }
-    
-      revisionPlagasList.removeAt(i);
-    setState(() {
-    });
+    revisionPlagasList.removeAt(i);
+    setState(() {});
   }
 
   Future<void> posteoRevisionPlaga(BuildContext context) async {

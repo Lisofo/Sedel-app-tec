@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, void_checks
 
+import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
@@ -13,6 +14,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/revision.dart';
 
 class TareasPage extends StatefulWidget {
   const TareasPage({super.key});
@@ -30,6 +33,8 @@ class _TareasPageState extends State<TareasPage> {
   late Orden orden = Orden.empty();
   late List<RevisionTarea> revisionTareasList = [];
   late int marcaId = 0;
+  late Revision revision = Revision.empty();
+
 
   @override
   void initState() {
@@ -48,7 +53,8 @@ class _TareasPageState extends State<TareasPage> {
     token = context.read<OrdenProvider>().token;
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
-    
+    revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+
     if(isConnected){
       tareas = await TareasServices().getTareas(token);
       revisionTareasList = await RevisionServices().getRevisionTareas(orden, token);
@@ -57,14 +63,14 @@ class _TareasPageState extends State<TareasPage> {
           addListasToBoxCodiguera(null, tareas[i], null, null, null);
         }
       }
-      // if(revisiones.values.whereType<RevisionTarea>().toList().isEmpty){
-      //   for(int i = 0; i<revisionTareasList.length; i++){
-      //     addToBoxRevisiones(null, revisionTareasList[i], null, null);
-      //   }
-      // }
+      if(orden.revision.revisionPlaga.isEmpty){
+        for (var tarea in revisionTareasList) {
+          orden.revision.revisionTarea.add(tarea);
+        }
+      }
     }else{
       tareas = await TareasServices().getTareasOffline();
-      revisionTareasList = await RevisionServices().getRevisionTareasOffline(orden);
+      revisionTareasList = revision.revisionTarea;
     }
 
     setState(() {});
@@ -80,8 +86,7 @@ class _TareasPageState extends State<TareasPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 52, 120, 62),
-        title: Text(
-          '${orden.ordenTrabajoId} - Tareas Realizadas',
+        title: Text('${orden.ordenTrabajoId} - Tareas Realizadas',
           style: const TextStyle(color: Colors.white),
         ),
       ),
@@ -107,9 +112,7 @@ class _TareasPageState extends State<TareasPage> {
                   },
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -123,8 +126,7 @@ class _TareasPageState extends State<TareasPage> {
                       }
                       bool agregarTarea = true;
                       if (revisionTareasList.isNotEmpty) {
-                        agregarTarea = !revisionTareasList.any((tarea) =>
-                            tarea.tareaId == selectedTarea.tareaId);
+                        agregarTarea = !revisionTareasList.any((tarea) => tarea.tareaId == selectedTarea.tareaId);
                       }
                       if (agregarTarea) {
                         await posteoRevisionTarea(context);
@@ -148,7 +150,8 @@ class _TareasPageState extends State<TareasPage> {
                     return Dismissible(
                       key: Key(item.toString()),
                       direction: DismissDirection.endToStart,
-                      confirmDismiss: (DismissDirection direction) {
+                      confirmDismiss: (DismissDirection direction) async {
+                        bool isConnected = await _checkConnectivity();
                         if(marcaId == 0){
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Marque entrada antes de ingresar datos.'),
@@ -172,8 +175,16 @@ class _TareasPageState extends State<TareasPage> {
                                     foregroundColor: Colors.red,
                                   ),
                                   onPressed: () async {
-                                    Navigator.of(context).pop(true);
-                                    await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
+                                    if(isConnected){
+                                      Navigator.of(context).pop(true);
+                                      await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
+                                    }else{
+                                      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                        content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
+                                      ));
+                                      router.pop(context);
+                                    }
                                   },
                                   child: const Text("BORRAR")
                                 ),
@@ -253,16 +264,24 @@ class _TareasPageState extends State<TareasPage> {
   }
 
   Future<void> borrarTarea(BuildContext context, int i) async {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
-    ));
-    await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
-    setState(() {
-      revisionTareasList.removeAt(i);
-    });
+    bool isConnected = await _checkConnectivity();
+    if(isConnected){
+      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+      await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
+    }else{
+      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
+      ));
+      router.pop(context);
+    }
+    revisionTareasList.removeAt(i);
+    setState(() {});
   }
 
   Future<void> posteoRevisionTarea(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     var nuevaTarea = RevisionTarea(
         otTareaId: 0,
         ordenTrabajoId: orden.ordenTrabajoId,
@@ -271,9 +290,14 @@ class _TareasPageState extends State<TareasPage> {
         codTarea: selectedTarea.codTarea,
         descripcion: selectedTarea.descripcion,
         comentario: '');
-    await RevisionServices().postRevisionTarea(
-        context, orden, selectedTarea.tareaId, nuevaTarea, token);
-    revisionTareasList.add(nuevaTarea);
+
+    if(isConnected){
+      revisionSeleccionada.revisionTarea.add(nuevaTarea);
+      await RevisionServices().postRevisionTarea(context, orden, selectedTarea.tareaId, nuevaTarea, token);
+      revisionTareasList.add(nuevaTarea);
+    }else{
+      revisionSeleccionada.revisionTarea.add(nuevaTarea);
+    }    
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
       duration: const Duration(milliseconds: 500),
