@@ -177,6 +177,7 @@ class _TareasPageState extends State<TareasPage> {
                                   onPressed: () async {
                                     if(isConnected){
                                       Navigator.of(context).pop(true);
+                                      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
                                       await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
                                     }else{
                                       await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
@@ -211,8 +212,7 @@ class _TareasPageState extends State<TareasPage> {
                         ),
                       ),
                       child: Container(
-                        decoration: const BoxDecoration(
-                            border: Border(bottom: BorderSide())),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
                         child: ListTile(
                           title: Text(revisionTareasList[i].descripcion),
                           trailing: IconButton(
@@ -283,13 +283,13 @@ class _TareasPageState extends State<TareasPage> {
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     var nuevaTarea = RevisionTarea(
-        otTareaId: 0,
-        ordenTrabajoId: orden.ordenTrabajoId,
-        otRevisionId: orden.otRevisionId,
-        tareaId: selectedTarea.tareaId,
-        codTarea: selectedTarea.codTarea,
-        descripcion: selectedTarea.descripcion,
-        comentario: '');
+      otTareaId: 0,
+      ordenTrabajoId: orden.ordenTrabajoId,
+      otRevisionId: orden.otRevisionId,
+      tareaId: selectedTarea.tareaId,
+      codTarea: selectedTarea.codTarea,
+      descripcion: selectedTarea.descripcion,
+      comentario: '');
 
     if(isConnected){
       revisionSeleccionada.revisionTarea.add(nuevaTarea);
