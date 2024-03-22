@@ -30,7 +30,7 @@ class OrdenAdapter extends TypeAdapter<Orden> {
       servicio: (fields[10] as List).cast<ServicioOrdenes>(),
       otRevisionId: fields[11] as int,
       planoId: fields[12] as int,
-      revision: fields[13] as Revision,
+      revision: fields[13] as Revision?,
     );
   }
 

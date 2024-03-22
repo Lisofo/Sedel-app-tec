@@ -43,9 +43,9 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     if(isConnected){
       observaciones = await RevisionServices().getObservacion(orden, token);
-      if(orden.revision.revisionObservacion.isEmpty){
+      if(orden.revision!.revisionObservacion.isEmpty){
         for (var obs in observaciones) {
-          orden.revision.revisionObservacion.add(obs);
+          orden.revision!.revisionObservacion.add(obs);
         }
       }
     if (observaciones.isNotEmpty) {

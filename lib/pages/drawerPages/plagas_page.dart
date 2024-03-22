@@ -86,9 +86,9 @@ class _PlagasPageState extends State<PlagasPage> {
           addListasToBoxCodiguera(plagas[i], null, null, null, null);
         }
       }
-      if(orden.revision.revisionPlaga.isEmpty){
+      if(orden.revision!.revisionPlaga.isEmpty){
         for (var plaga in revisionPlagasList) {
-          orden.revision.revisionPlaga.add(plaga);
+          orden.revision!.revisionPlaga.add(plaga);
         }
       }
             

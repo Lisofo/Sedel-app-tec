@@ -63,9 +63,9 @@ class _TareasPageState extends State<TareasPage> {
           addListasToBoxCodiguera(null, tareas[i], null, null, null);
         }
       }
-      if(orden.revision.revisionPlaga.isEmpty){
+      if(orden.revision!.revisionPlaga.isEmpty){
         for (var tarea in revisionTareasList) {
-          orden.revision.revisionTarea.add(tarea);
+          orden.revision?.revisionTarea.add(tarea);
         }
       }
     }else{

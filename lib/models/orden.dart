@@ -44,7 +44,7 @@ class Orden extends HiveObject {
   @HiveField(12)
   late int planoId;
   @HiveField(13)
-  late Revision revision;
+  late Revision? revision;
 
   Orden({
     required this.ordenTrabajoId,

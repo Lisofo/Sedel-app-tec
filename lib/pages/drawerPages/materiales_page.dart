@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/lote.dart';
 import '../../models/metodo_aplicacion.dart';
+import '../../models/revision.dart';
 
 class MaterialesPage extends StatefulWidget {
   const MaterialesPage({super.key});
@@ -43,6 +44,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
   late Orden orden = Orden.empty();
   final ScrollController _scrollController = ScrollController();
   late int marcaId = 0;
+  late Revision revision = Revision.empty();
 
   @override
   void initState() {
@@ -55,9 +57,8 @@ class _MaterialesPageState extends State<MaterialesPage> {
     token = context.read<OrdenProvider>().token;
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
+    revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     
-    
-
     if(isConnected){
       materiales = await MaterialesServices().getMateriales(token);
       revisionMaterialesList = await MaterialesServices().getRevisionMateriales(orden, token);
@@ -66,11 +67,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
           addListasToBoxCodiguera(null, null, materiales[i], null, null);
         }
       }
-      // if(revisiones.values.whereType<RevisionMaterial>().toList().isEmpty){
-      //   for(int i = 0; i<revisionMaterialesList.length; i++){
-      //     addToBoxRevisiones(null, null, null, revisionMaterialesList[i]);
-      //   }
-      // }
+
       for(int i = 0; i < lotes.length; i++){
         addListasToBoxCodiguera(null, null, null, lotes[i], null);
       }
@@ -78,9 +75,16 @@ class _MaterialesPageState extends State<MaterialesPage> {
       for(int i = 0; i < metodosAplicacion.length; i++){
         addListasToBoxCodiguera(null, null, null, null, metodosAplicacion[i]);
       }
+
+      if(orden.revision!.revisionMaterial.isEmpty){
+        for (var material in revisionMaterialesList) {
+          orden.revision!.revisionMaterial.add(material);
+        } 
+      }
+
     }else{
       materiales = await MaterialesServices().getMaterialesOffline(token);
-      revisionMaterialesList = await MaterialesServices().getRevisionMaterialesOffline(orden);
+      revisionMaterialesList = revision.revisionMaterial;
     }
 
     setState(() {});
@@ -192,31 +196,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  late List<int> plagasIds = [];
-
-                  final RevisionMaterial nuevaRevisionMaterial =
-                      RevisionMaterial(
-                          otMaterialId: 0,
-                          ordenTrabajoId: orden.ordenTrabajoId,
-                          otRevisionId: orden.otRevisionId,
-                          cantidad: esNumerico(cantidad)
-                              ? double.parse(cantidad)
-                              : double.parse("0.0"),
-                          comentario: '',
-                          ubicacion: ubicacion,
-                          areaCobertura: areaCobertura,
-                          plagas: plagasSeleccionadas,
-                          material: material,
-                          lote: selectedLote!,
-                          metodoAplicacion: selectedMetodo!);
-                  for (var i = 0; i < plagasSeleccionadas.length; i++) {
-                    plagasIds.add(plagasSeleccionadas[i].plagaId);
-                  }
-                  await MaterialesServices().postRevisionMaterial(
-                      context, orden, plagasIds, nuevaRevisionMaterial, token);
-                  revisionMaterialesList.add(nuevaRevisionMaterial);
-
-                  setState(() {});
+                  await posteoRevisionMateriales(material, context);
                 },
               ),
             ],
@@ -309,9 +289,9 @@ class _MaterialesPageState extends State<MaterialesPage> {
                         controller: _scrollController,
                         itemCount: revisionMaterialesList.length,
                         itemBuilder: (context, i) {
-                          final item = revisionMaterialesList[i];
+                          final material = revisionMaterialesList[i];
                           return Dismissible(
-                            key: Key(item.toString()),
+                            key: Key(material.toString()),
                             direction: DismissDirection.endToStart,
                             confirmDismiss: (DismissDirection direction) async {
                               if(marcaId == 0){
@@ -325,30 +305,22 @@ class _MaterialesPageState extends State<MaterialesPage> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: const Text("Confirmar"),
-                                    content: const Text(
-                                        "¿Estas seguro de querer borrar el material?"),
+                                    content: const Text("¿Estas seguro de querer borrar el material?"),
                                     actions: <Widget>[
                                       TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context)
-                                                .pop(false),
+                                        onPressed: () => Navigator.of(context).pop(false),
                                         child: const Text("CANCELAR"),
                                       ),
                                       TextButton(
-                                          style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
-                                          ),
-                                          onPressed: () async {
-                                            Navigator.of(context).pop(true);
-                                            await MaterialesServices()
-                                                .deleteRevisionMaterial(
-                                                    context,
-                                                    orden,
-                                                    revisionMaterialesList[
-                                                        i],
-                                                    token);
-                                          },
-                                          child: const Text("BORRAR")),
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: Colors.red,
+                                        ),
+                                        onPressed: () async {
+                                          Navigator.of(context).pop(true);
+                                          await MaterialesServices().deleteRevisionMaterial(context,orden,revisionMaterialesList[i],token);
+                                        },
+                                        child: const Text("BORRAR")
+                                      ),
                                     ],
                                   );
                                 },
@@ -359,13 +331,12 @@ class _MaterialesPageState extends State<MaterialesPage> {
                                 revisionMaterialesList.removeAt(i);
                               });
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text('$item borrado'),
+                                content: Text('$material borrado'),
                               ));
                             },
                             background: Container(
                               color: Colors.red,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20),
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               alignment: AlignmentDirectional.centerEnd,
                               child: const Icon(
                                 Icons.delete,
@@ -383,75 +354,53 @@ class _MaterialesPageState extends State<MaterialesPage> {
                                         return Future.value(false);
                                       }
                                       showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title:
-                                                  const Text("Confirmar"),
-                                              content: const Text(
-                                                  "¿Estas seguro de querer borrar el material?"),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.of(context)
-                                                          .pop(false),
-                                                  child: const Text(
-                                                      "CANCELAR"),
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Confirmar"),
+                                            content: const Text(
+                                                "¿Estas seguro de querer borrar el material?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(false),
+                                                child: const Text("CANCELAR"),
+                                              ),
+                                              TextButton(
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.red,
                                                 ),
-                                                TextButton(
-                                                    style: TextButton
-                                                        .styleFrom(
-                                                      foregroundColor:
-                                                          Colors.red,
-                                                    ),
-                                                    onPressed: () async {
-                                                      await MaterialesServices()
-                                                          .deleteRevisionMaterial(
-                                                              context,
-                                                              orden,
-                                                              revisionMaterialesList[
-                                                                  i],
-                                                              token);
-                                                      setState(() {
-                                                        revisionMaterialesList
-                                                            .removeAt(i);
-                                                      });
-                                                    },
-                                                    child: const Text(
-                                                        "BORRAR")),
-                                              ],
-                                            );
-                                          });
+                                                onPressed: () async {
+                                                  await MaterialesServices().deleteRevisionMaterial(context,orden,revisionMaterialesList[i],token);
+                                                  setState(() {
+                                                    revisionMaterialesList.removeAt(i);
+                                                  });
+                                                },
+                                                child: const Text("BORRAR")
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                      );
                                     },
                                     icon: const Icon(Icons.delete)),
                                 title: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        'Material: ${revisionMaterialesList[i].material.descripcion}'),
-                                    Text(
-                                        'Unidad: ${revisionMaterialesList[i].material.unidad}'),
-                                    Text(
-                                        'Cantidad: ${revisionMaterialesList[i].cantidad}'),
-                                    Text(
-                                        'Lote: ${revisionMaterialesList[i].lote}'),
-                                    Text(
-                                        'Metodo de aplicacion: ${revisionMaterialesList[i].metodoAplicacion}'),
-                                    Text(
-                                        'Ubicación: ${revisionMaterialesList[i].ubicacion}'),
-                                    Text(
-                                        'Área de Cobertura: ${revisionMaterialesList[i].areaCobertura}'),
-                                    Text(
-                                        'Plagas: ${revisionMaterialesList[i].plagas}'),
+                                    Text('Material: ${revisionMaterialesList[i].material.descripcion}'),
+                                    Text('Unidad: ${revisionMaterialesList[i].material.unidad}'),
+                                    Text('Cantidad: ${revisionMaterialesList[i].cantidad}'),
+                                    Text('Lote: ${revisionMaterialesList[i].lote}'),
+                                    Text('Metodo de aplicacion: ${revisionMaterialesList[i].metodoAplicacion}'),
+                                    Text('Ubicación: ${revisionMaterialesList[i].ubicacion}'),
+                                    Text('Área de Cobertura: ${revisionMaterialesList[i].areaCobertura}'),
+                                    Text('Plagas: ${revisionMaterialesList[i].plagas}'),
                                   ],
                                 ),
                               ),
                             ),
                           );
                         },
-                        separatorBuilder:
-                            (BuildContext context, int index) {
+                        separatorBuilder: (BuildContext context, int index) {
                           return const Divider(
                             thickness: 2,
                             color: Colors.green,
@@ -469,7 +418,34 @@ class _MaterialesPageState extends State<MaterialesPage> {
     );
   }
 
+  Future<void> posteoRevisionMateriales(Materiales material, BuildContext context) async {
+    late List<int> plagasIds = [];
+    
+    final RevisionMaterial nuevaRevisionMaterial =
+        RevisionMaterial(
+            otMaterialId: 0,
+            ordenTrabajoId: orden.ordenTrabajoId,
+            otRevisionId: orden.otRevisionId,
+            cantidad: esNumerico(cantidad) ? double.parse(cantidad) : double.parse("0.0"),
+            comentario: '',
+            ubicacion: ubicacion,
+            areaCobertura: areaCobertura,
+            plagas: plagasSeleccionadas,
+            material: material,
+            lote: selectedLote!,
+            metodoAplicacion: selectedMetodo!);
+    for (var i = 0; i < plagasSeleccionadas.length; i++) {
+      plagasIds.add(plagasSeleccionadas[i].plagaId);
+    }
+    await MaterialesServices().postRevisionMaterial(
+        context, orden, plagasIds, nuevaRevisionMaterial, token);
+    revisionMaterialesList.add(nuevaRevisionMaterial);
+    
+    setState(() {});
+  }
+
   bool esNumerico(String str) {
     return double.tryParse(str) != null;
   }
+
 }

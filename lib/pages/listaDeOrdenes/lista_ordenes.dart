@@ -87,15 +87,15 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
     for(int i = 0; i<ordenes.length; i++){
       cargando = true;
       if(ordenes[i].otRevisionId != 0){
-        ordenes[i].revision.otRevisionId = ordenes[i].otRevisionId;
-        ordenes[i].revision.otOrdenId = ordenes[i].ordenTrabajoId;
-        ordenes[i].revision.revisionPlaga = await RevisionServices().getRevisionPlagas(ordenes[i], token);
-        ordenes[i].revision.revisionTarea = await RevisionServices().getRevisionTareas(ordenes[i], token);
-        ordenes[i].revision.revisionMaterial = await MaterialesServices().getRevisionMateriales(ordenes[i], token);
-        ordenes[i].revision.revisionObservacion = await RevisionServices().getObservacion(ordenes[i], token);
-        // ordenes[i].revision.revisionFirma = await RevisionServices().getRevisionFirmas(ordenes[i], token);
-        ordenes[i].revision.revisionPtoInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, ordenes[i], token);
-        addToBoxRevisiones(ordenes[i].revision);
+        ordenes[i].revision?.otRevisionId = ordenes[i].otRevisionId;
+        ordenes[i].revision?.otOrdenId = ordenes[i].ordenTrabajoId;
+        ordenes[i].revision?.revisionPlaga = await RevisionServices().getRevisionPlagas(ordenes[i], token);
+        ordenes[i].revision?.revisionTarea = await RevisionServices().getRevisionTareas(ordenes[i], token);
+        ordenes[i].revision?.revisionMaterial = await MaterialesServices().getRevisionMateriales(ordenes[i], token);
+        ordenes[i].revision?.revisionObservacion = await RevisionServices().getObservacion(ordenes[i], token);
+        // ordenes[i].revision?.revisionFirma = await RevisionServices().getRevisionFirmas(ordenes[i], token);
+        ordenes[i].revision?.revisionPtoInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, ordenes[i], token);
+        // addToBoxRevisiones(ordenes[i].revision);
       }
     }
     cargando = false; 

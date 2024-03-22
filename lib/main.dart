@@ -44,6 +44,29 @@ Future<void> main() async {
   ));
 }
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
+      title: 'App Tecnicos SEDEL',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es'), // Spanish
+        Locale('en'), // English
+      ],
+    );
+  }
+}
+
+// METODOS //
 Future<void> cargarHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(OrdenAdapter());
@@ -77,26 +100,4 @@ Future<void> cargarHive() async {
   //codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
   revisiones.clear();
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      title: 'App Tecnicos SEDEL',
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('es'), // Spanish
-        Locale('en'), // English
-      ],
-    );
-  }
 }
