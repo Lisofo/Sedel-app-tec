@@ -95,7 +95,7 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(PtoAccionAdapter());
   
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
-  boxOrdenes.clear();
+  //boxOrdenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
   //codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');

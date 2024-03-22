@@ -353,6 +353,7 @@ class _PlagasPageState extends State<PlagasPage> {
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
       revisionPlagasList.add(nuevaPlaga);
+      RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
     }
@@ -361,5 +362,17 @@ class _PlagasPageState extends State<PlagasPage> {
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
+  }
+
+  Future<void> posteoDeBox(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+
+    for(var post in revisionSeleccionada.revisionPlaga){
+      if(post.otPlagaId != 0){
+        await RevisionServices().postRevisionPlaga(context, orden, post, token);
+      }
+    }
+    RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
   }
 }
