@@ -306,9 +306,7 @@ class RevisionServices {
       );
       final List<dynamic> revisionPlagasList = resp.data;
 
-      return revisionPlagasList
-          .map((obj) => RevisionPlaga.fromJson(obj))
-          .toList();
+      return revisionPlagasList.map((obj) => RevisionPlaga.fromJson(obj)).toList();
     } catch (e) {
       print(e);
     }
@@ -413,8 +411,13 @@ class RevisionServices {
     }
   }
 
+  Future<int?> getStatusCodeFirma() async {
+    return statusCode;
+  }
+  int? statusCode;
+
   Future postRevisonFirma(BuildContext context, Orden orden, ClienteFirma firma, String token) async {
-    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/firmas';
+    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/firmas';
 
     var data = firma.toMap();
 
@@ -428,6 +431,7 @@ class RevisionServices {
         ),
         data: data,
       );
+      statusCode = resp.statusCode;
       if (resp.statusCode == 201) {
         firma.otFirmaId = resp.data["otFirmaId"];
         showDialogs(context, 'Firma guardada', false, false);

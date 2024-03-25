@@ -20,7 +20,7 @@ class LoginServices {
     var dio = Dio();
     String link = apiLink;
     try {
-      var response = await dio.request(
+      var resp = await dio.request(
         link,
         options: Options(
           method: 'POST',
@@ -29,20 +29,16 @@ class LoginServices {
         data: data,
       );
 
-      statusCode = response.statusCode;
+      statusCode = resp.statusCode;
 
       if (statusCode == 200) {
-        print(response.data['token']);
-        Provider.of<OrdenProvider>(context, listen: false)
-            .setToken(response.data['token']);
-        Provider.of<OrdenProvider>(context, listen: false)
-            .setUsuarioId(response.data['uid']);
-        Provider.of<OrdenProvider>(context, listen: false)
-            .setNombreUsuario(response.data['name']);
-        Provider.of<OrdenProvider>(context, listen: false)
-            .setTecnicoId(response.data['tecnicoId']);
+        print(resp.data['token']);
+        Provider.of<OrdenProvider>(context, listen: false).setToken(resp.data['token']);
+        Provider.of<OrdenProvider>(context, listen: false).setUsuarioId(resp.data['uid']);
+        Provider.of<OrdenProvider>(context, listen: false).setNombreUsuario(resp.data['name']);
+        Provider.of<OrdenProvider>(context, listen: false).setTecnicoId(resp.data['tecnicoId']);
       } else {
-        print(response.statusMessage);
+        print(resp.statusMessage);
       }
     } catch (e) {
       print('Error: $e');

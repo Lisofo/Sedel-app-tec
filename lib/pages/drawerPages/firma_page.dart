@@ -132,8 +132,7 @@ class _FirmaState extends State<Firma> {
                 firma.area = nuevoArea;
                 firma.nombre = nuevoNombre;
 
-                await RevisionServices()
-                    .putRevisionFirma(context, orden, firma, token);
+                await RevisionServices().putRevisionFirma(context, orden, firma, token);
               },
               child: const Text('Guardar'),
             ),
@@ -264,8 +263,7 @@ class _FirmaState extends State<Firma> {
                         padding: const EdgeInsets.all(10),
                         child: CustomButton(
                           onPressed: () async {
-                            if (nameController.text.isNotEmpty &&
-                                areaController.text.isNotEmpty) {
+                            if (nameController.text.isNotEmpty && areaController.text.isNotEmpty) {
                               await guardarFirma(context);
                             } else {
                               completeDatosPopUp(context);
@@ -397,8 +395,7 @@ class _FirmaState extends State<Firma> {
             ),
             onPressed: () async {
               Navigator.of(context).pop(true);
-              await RevisionServices()
-                  .deleteRevisionFirma(context, orden, client[index], token);
+              await RevisionServices().deleteRevisionFirma(context, orden, client[index], token);
             },
             child: const Text("BORRAR")),
       ],
@@ -411,20 +408,23 @@ class _FirmaState extends State<Firma> {
     md5Hash = calculateMD5(firmaBytes);
 
     final ClienteFirma nuevaFirma = ClienteFirma(
-        otFirmaId: 0,
-        ordenTrabajoId: orden.ordenTrabajoId,
-        otRevisionId: orden.otRevisionId,
-        nombre: nameController.text,
-        area: areaController.text,
-        firmaPath: '',
-        firmaMd5: md5Hash,
-        comentario: '',
-        firma: exportedImage);
+      otFirmaId: 0,
+      ordenTrabajoId: orden.ordenTrabajoId,
+      otRevisionId: orden.otRevisionId,
+      nombre: nameController.text,
+      area: areaController.text,
+      firmaPath: '',
+      firmaMd5: md5Hash,
+      comentario: '',
+      firma: exportedImage
+    );
 
-    await RevisionServices()
-        .postRevisonFirma(context, orden, nuevaFirma, token);
-
-    _agregarCliente();
+    await RevisionServices().postRevisonFirma(context, orden, nuevaFirma, token);
+    var statusCode = await RevisionServices().getStatusCodeFirma();
+    
+    if(statusCode == 201){
+      _agregarCliente();
+    }
   }
 
   void completeDatosPopUp(BuildContext context) {
