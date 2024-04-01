@@ -209,10 +209,9 @@ class RevisionServices {
     }
   }
 
-  Future postRevisionTarea(BuildContext context, Orden orden, int tareaId,
-      RevisionTarea revisionTarea, String token) async {
-    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/tareas';
-    var data = ({"idTarea": tareaId, "comentario": ""});
+  Future postRevisionTarea(BuildContext context, Orden orden,  RevisionTarea revisionTarea, String token) async {
+    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/tareas';
+    var data = ({"idTarea": revisionTarea.tareaId, "comentario": ""});
 
     try {
       var headers = {'Authorization': token};

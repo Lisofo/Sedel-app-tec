@@ -70,10 +70,6 @@ class _MaterialesPageState extends State<MaterialesPage> {
         }
       }
 
-      for(int i = 0; i < lotes.length; i++){
-        addListasToBoxCodiguera(null, null, null, lotes[i], null);
-      }
-
       for(int i = 0; i < metodosAplicacion.length; i++){
         addListasToBoxCodiguera(null, null, null, null, metodosAplicacion[i]);
       }
@@ -102,7 +98,10 @@ class _MaterialesPageState extends State<MaterialesPage> {
     if(isConnected){
       plagas = await PlagaServices().getPlagas(token);
       lotes = await MaterialesServices().getLotes(selectedMaterial.materialId, token);
-      metodosAplicacion = await MaterialesServices().getMetodosAplicacion(token);      
+      metodosAplicacion = await MaterialesServices().getMetodosAplicacion(token); 
+      for(int i = 0; i < lotes.length; i++){
+        addListasToBoxCodiguera(null, null, null, lotes[i], null);
+      }
     }else{
       plagas = await PlagaServices().getPlagasOffline();
       lotes = await MaterialesServices().getLotesOffline(selectedMaterial.materialId);

@@ -46,8 +46,7 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
       GlobalKey<RefreshIndicatorState>();
 
   readQRCode() async {
-    String code = await FlutterBarcodeScanner.scanBarcode(
-        '#FFFFFF', 'Cancelar', false, ScanMode.QR);
+    String code = await FlutterBarcodeScanner.scanBarcode('#FFFFFF', 'Cancelar', false, ScanMode.QR);
     /*context.read<ItemProvider>().setItem(code);
     var products = widget.products;
     final prodPP =
