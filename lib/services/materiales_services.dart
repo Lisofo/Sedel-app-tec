@@ -4,6 +4,7 @@ import 'package:app_tecnicos_sedel_wifiless/config/config.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/materiales_tpi.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
@@ -133,7 +134,7 @@ class MaterialesServices {
   Future<List<Lote>> getLotesOffline(int materialId) async {
     List<Lote> listaLotesOffline = [];
 
-    listaLotesOffline = revisiones.values.whereType<Lote>().where((lote) => lote.materialLoteId == materialId).toList();
+    listaLotesOffline = codigueras.values.whereType<Lote>().where((lote) => lote.materialLoteId == materialId).toList();
     return listaLotesOffline;
   }
 
@@ -159,7 +160,7 @@ class MaterialesServices {
 
   Future<List<MetodoAplicacion>> getMetodosAplicacionOffline() async {
     List<MetodoAplicacion> listMetodoAplicacionOffline = [];
-    listMetodoAplicacionOffline = revisiones.values.whereType<MetodoAplicacion>().toList();
+    listMetodoAplicacionOffline = codigueras.values.whereType<MetodoAplicacion>().toList();
     return listMetodoAplicacionOffline;
   }
 
@@ -278,4 +279,12 @@ class MaterialesServices {
       }
     }
   }
+
+
+  Future deleteRevisionMaterialOffline (RevisionMaterial revisionMaterial, Orden orden) async{
+    Revision revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    revision.revisionMaterial.removeWhere((material) => material.otMaterialId == revisionMaterial.otMaterialId);
+    print('Material eliminado con éxito');
+  }
+
 }

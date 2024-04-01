@@ -390,9 +390,9 @@ class _PlagasPageState extends State<PlagasPage> {
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
 
     for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
-      var post = revisionSeleccionada.revisionPlaga[i];
-      if(post.otPlagaId != 0){
-        await RevisionServices().postRevisionPlaga(context, orden, post, token);
+      RevisionPlaga plaga = revisionSeleccionada.revisionPlaga[i];
+      if(plaga.otPlagaId == 0){
+        await RevisionServices().postRevisionPlaga(context, orden, plaga, token);
       }
     }
     RevisionServices.showDialogs(context, 'Plaga guardada', false, false);

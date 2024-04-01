@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, avoid_init_to_null, void_checks
 
+import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
@@ -9,6 +10,7 @@ import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/materiales_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/plagas_services.dart';
+import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -316,8 +318,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                                           foregroundColor: Colors.red,
                                         ),
                                         onPressed: () async {
-                                          Navigator.of(context).pop(true);
-                                          await MaterialesServices().deleteRevisionMaterial(context,orden,revisionMaterialesList[i],token);
+                                          await borrarMaterial(context, i);
                                         },
                                         child: const Text("BORRAR")
                                       ),
@@ -418,9 +419,30 @@ class _MaterialesPageState extends State<MaterialesPage> {
     );
   }
 
+
+  Future<void> borrarMaterial(BuildContext context, int i) async{
+    bool isConnected = await _checkConnectivity();
+    if(isConnected){
+      await MaterialesServices().deleteRevisionMaterialOffline(revisionMaterialesList[i], orden);
+      await MaterialesServices().deleteRevisionMaterial(context,orden,revisionMaterialesList[i],token);
+    }else{
+      await MaterialesServices().deleteRevisionMaterialOffline(revisionMaterialesList[i], orden);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('El Material ${revisionMaterialesList[i].material} ha sido borrado'),
+        )
+      );  
+      router.pop(context);
+    }
+    revisionMaterialesList.removeAt(i);
+    setState(() {});
+  }
+
   Future<void> posteoRevisionMateriales(Materiales material, BuildContext context) async {
     late List<int> plagasIds = [];
-    
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+
     final RevisionMaterial nuevaRevisionMaterial =
         RevisionMaterial(
             otMaterialId: 0,
@@ -434,14 +456,38 @@ class _MaterialesPageState extends State<MaterialesPage> {
             material: material,
             lote: selectedLote!,
             metodoAplicacion: selectedMetodo!);
+
     for (var i = 0; i < plagasSeleccionadas.length; i++) {
       plagasIds.add(plagasSeleccionadas[i].plagaId);
     }
-    await MaterialesServices().postRevisionMaterial(
-        context, orden, plagasIds, nuevaRevisionMaterial, token);
-    revisionMaterialesList.add(nuevaRevisionMaterial);
-    
+
+
+    if(isConnected){
+      revisionSeleccionada.revisionMaterial.add(nuevaRevisionMaterial);
+      await MaterialesServices().postRevisionMaterial(context, orden, plagasIds, nuevaRevisionMaterial, token);
+      revisionMaterialesList.add(nuevaRevisionMaterial);
+      MaterialesServices.showDialogs(context, 'Material Guardado', false, false);
+    }
+    else{
+      revisionSeleccionada.revisionMaterial.add(nuevaRevisionMaterial);
+    }
     setState(() {});
+  }
+
+  Future<void> posteoDeBox(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    for(int i = 0; i < revisionSeleccionada.revisionMaterial.length; i++){
+      late List<int> plagasIds = [];
+      for (var i = 0; i < plagasSeleccionadas.length; i++) {
+        plagasIds.add(plagasSeleccionadas[i].plagaId);
+      }
+      RevisionMaterial material = revisionSeleccionada.revisionMaterial[i];
+      if(material.otMaterialId == 0){
+        await MaterialesServices().postRevisionMaterial(context, orden, plagasIds, material, token);
+      }
+    }
+    RevisionServices.showDialogs(context, 'Material guardado', false, false);
   }
 
   bool esNumerico(String str) {

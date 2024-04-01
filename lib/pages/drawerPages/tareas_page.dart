@@ -138,6 +138,24 @@ class _TareasPageState extends State<TareasPage> {
                   ),
                 ],
               ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomButton(
+                      onPressed: () async {
+                        if(marcaId == 0){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Marque entrada antes de ingresar datos.'),
+                          ));
+                          return Future.value(false);
+                        }
+                        await posteoDeBox(context);
+                      },
+                      text: 'Sincronizar',
+                      tamano: 20,
+                    ),
+                  ],
+                ),
               const SizedBox(height: 20,),
               Container(
                 constraints: BoxConstraints(
@@ -303,5 +321,18 @@ class _TareasPageState extends State<TareasPage> {
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
+  }
+
+  Future<void> posteoDeBox(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+
+    for(int i = 0; i < revisionSeleccionada.revisionTarea.length; i++){
+      RevisionTarea tarea = revisionSeleccionada.revisionTarea[i];
+      if(tarea.otTareaId == 0){
+        await RevisionServices().postRevisionTarea(context, orden, tarea.tareaId, tarea, token);
+      }
+    }
+    RevisionServices.showDialogs(context, 'Tarea Guardada', false, false);
   }
 }
