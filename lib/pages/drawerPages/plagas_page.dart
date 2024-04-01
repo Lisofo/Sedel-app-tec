@@ -391,7 +391,7 @@ class _PlagasPageState extends State<PlagasPage> {
 
     for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
       var post = revisionSeleccionada.revisionPlaga[i];
-      if(post.otPlagaId != 0){
+      if(post.otPlagaId == 0){
         await RevisionServices().postRevisionPlaga(context, orden, post, token);
       }
     }

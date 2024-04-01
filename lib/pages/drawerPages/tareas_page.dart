@@ -293,7 +293,7 @@ class _TareasPageState extends State<TareasPage> {
 
     if(isConnected){
       revisionSeleccionada.revisionTarea.add(nuevaTarea);
-      await RevisionServices().postRevisionTarea(context, orden, selectedTarea.tareaId, nuevaTarea, token);
+      await RevisionServices().postRevisionTarea(context, orden, nuevaTarea, token);
       revisionTareasList.add(nuevaTarea);
     }else{
       revisionSeleccionada.revisionTarea.add(nuevaTarea);
