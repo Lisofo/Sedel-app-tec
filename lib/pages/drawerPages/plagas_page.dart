@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, void_checks
+
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/grado_infestacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
@@ -90,9 +91,7 @@ class _PlagasPageState extends State<PlagasPage> {
         for (var plaga in revisionPlagasList) {
           orden.revision!.revisionPlaga.add(plaga);
         }
-      }
-            
-      
+      } 
     }else{
       plagas = await PlagaServices().getPlagasOffline();
       revisionPlagasList = revision.revisionPlaga;
@@ -143,14 +142,18 @@ class _PlagasPageState extends State<PlagasPage> {
                 ),
                 Container(
                   decoration: BoxDecoration(
-                      border: Border.all(
-                          width: 2,
-                          color: const Color.fromARGB(255, 52, 120, 62)),
-                      borderRadius: BorderRadius.circular(5)),
+                    border: Border.all(
+                      width: 2,
+                      color: const Color.fromARGB(255, 52, 120, 62)
+                    ),
+                    borderRadius: BorderRadius.circular(5)
+                  ),
                   child: DropdownSearch(
                     items: gradoInfeccion,
                     popupProps: const PopupProps.menu(
-                        showSearchBox: true, searchDelay: Duration.zero),
+                      showSearchBox: true, 
+                      searchDelay: Duration.zero
+                    ),
                     onChanged: (value) {
                       setState(() {
                         selectedGrado = value;
@@ -183,6 +186,24 @@ class _PlagasPageState extends State<PlagasPage> {
                         }
                       },
                       text: 'Agregar +',
+                      tamano: 20,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomButton(
+                      onPressed: () async {
+                        if(marcaId == 0){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Marque entrada antes de ingresar datos.'),
+                          ));
+                          return Future.value(false);
+                        }
+                        await posteoDeBox(context);
+                      },
+                      text: 'Sincronizar',
                       tamano: 20,
                     ),
                   ],
@@ -368,7 +389,8 @@ class _PlagasPageState extends State<PlagasPage> {
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
 
-    for(var post in revisionSeleccionada.revisionPlaga){
+    for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
+      var post = revisionSeleccionada.revisionPlaga[i];
       if(post.otPlagaId != 0){
         await RevisionServices().postRevisionPlaga(context, orden, post, token);
       }

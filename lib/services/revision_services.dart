@@ -368,7 +368,7 @@ class RevisionServices {
   }
 
   Future postRevisionPlaga(BuildContext context, Orden orden, RevisionPlaga revisionPlaga, String token) async {
-    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId.toString()}/revisiones/${orden.otRevisionId}/plagas';
+    String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/plagas';
     var data = ({
       "idPlaga": revisionPlaga.plagaId,
       "idGradoInfestacion": revisionPlaga.gradoInfestacionId,
@@ -387,7 +387,7 @@ class RevisionServices {
       );
       if (resp.statusCode == 201) {
         revisionPlaga.otPlagaId = resp.data["otPlagaId"];
-        showDialogs(context, 'Plaga guardada', false, false);
+        // showDialogs(context, 'Plaga guardada', false, false);
       }
 
       return;
