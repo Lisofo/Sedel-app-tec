@@ -2,6 +2,7 @@
 
 import 'package:app_tecnicos_sedel_wifiless/config/config.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
@@ -215,8 +216,8 @@ class PtosInspeccionServices {
   Future putPtoInspeccionAccionOffline(Orden orden, RevisionPtoInspeccion nuevaRevisionPtoInspeccion) async {
     RevisionPtoInspeccion ptoAEditar;
     
-    ptoAEditar = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).where(
-    (puntoInspeccion) => puntoInspeccion.puntoInspeccionId == nuevaRevisionPtoInspeccion.puntoInspeccionId).toList()[0];
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];    
+    ptoAEditar = revisionSeleccionada.revisionPtoInspeccion.where((ptoInspeccion) => ptoInspeccion.puntoInspeccionId == nuevaRevisionPtoInspeccion.puntoInspeccionId).toList()[0];
 
     switch (nuevaRevisionPtoInspeccion.idPIAccion) {
       case 1:
