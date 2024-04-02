@@ -115,6 +115,7 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
           addListasToBoxCodiguera(null, null, null, null, null, null, tiposDePuntos[i]);
         }
       }
+      revision.revisionPtoInspeccion = ptosInspeccion;
     }else{
       plagasObjetivo = await PlagaServices().getPlagasObjetivoOffline();
       tiposDePuntos = await PtosInspeccionServices().getTiposPtosInspeccionOffline();
@@ -721,11 +722,9 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
 
       print(puntosSeleccionados[i].puntoInspeccionId);
       if (puntosSeleccionados[i].otPuntoInspeccionId != 0) {
-        await PtosInspeccionServices().putPtoInspeccionAccion(
-            context, orden, nuevaRevisionPtoInspeccion, token);
+        await PtosInspeccionServices().putPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
       } else {
-        await PtosInspeccionServices().postPtoInspeccionAccion(
-            context, orden, nuevaRevisionPtoInspeccion, token);
+        await PtosInspeccionServices().postPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
       }
     }
 
@@ -768,9 +767,9 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
           seleccionado: puntosSeleccionados[i].seleccionado);
       if(isConnected){
         if (puntosSeleccionados[i].otPuntoInspeccionId != 0) {
-          revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);
           await PtosInspeccionServices().putPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
         } else {
+          revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);
           await PtosInspeccionServices().postPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
         }
       } else{
@@ -833,10 +832,11 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
   }
 
   Future<void> actualizarDatos() async {
-    ptosInspeccion =
-        await PtosInspeccionServices().getPtosInspeccion(context, orden, token);
-    plagasObjetivo = await PlagaServices().getPlagasObjetivo(context, token);
-
+    bool isConnected = await _checkConnectivity();
+    if(isConnected){
+      ptosInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, orden, token);
+      plagasObjetivo = await PlagaServices().getPlagasObjetivo(context, token);
+    }
     setState(() {});
   }
 

@@ -14,6 +14,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
+import 'models/plaga_objetivo.dart';
+import 'models/tipos_ptos_inspeccion.dart';
 import 'models/traslado_nuevo.dart';
 import 'providers/orden_provider.dart';
 import 'offline/boxes.dart';
@@ -93,6 +95,8 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(PtoPlagaAdapter());
   Hive.registerAdapter(PtoTareaAdapter());
   Hive.registerAdapter(PtoAccionAdapter());
+  Hive.registerAdapter(PlagaObjetivoAdapter());
+  Hive.registerAdapter(TipoPtosInspeccionAdapter());
   
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
   //boxOrdenes.clear();
