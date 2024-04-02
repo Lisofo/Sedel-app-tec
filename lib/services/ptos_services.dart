@@ -5,6 +5,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
+import 'package:app_tecnicos_sedel_wifiless/providers/puntos_inspeccion_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -215,6 +216,15 @@ class PtosInspeccionServices {
         }
       }
     }
+  }
+
+  Future putPtoInspeccionAccionOffline(Orden orden, RevisionPtoInspeccion nuevaRevisionPtoInspeccion) async {
+    RevisionPtoInspeccion ptoAEditar;
+    
+    ptoAEditar = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).where(
+      (puntoInspeccion) => puntoInspeccion.puntoInspeccionId == nuevaRevisionPtoInspeccion.puntoInspeccionId).toList()[0];
+
+
   }
 
   Future putPtoInspeccionAccion(BuildContext context, Orden orden,

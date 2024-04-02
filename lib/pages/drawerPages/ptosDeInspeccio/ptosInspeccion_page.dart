@@ -768,13 +768,17 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
           seleccionado: puntosSeleccionados[i].seleccionado);
       if(isConnected){
         if (puntosSeleccionados[i].otPuntoInspeccionId != 0) {
-          revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);
           await PtosInspeccionServices().putPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
         } else {
+          //revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);
           await PtosInspeccionServices().postPtoInspeccionAccion(context, orden, nuevaRevisionPtoInspeccion, token);
         }
       } else{
-        revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);
+        if(puntosSeleccionados[i].piAccionId != 0 && puntosSeleccionados[i].piAccionId != null ){
+          await PtosInspeccionServices().putPtoInspeccionAccionOffline(orden, nuevaRevisionPtoInspeccion);
+        }else{
+          revision.revisionPtoInspeccion.add(nuevaRevisionPtoInspeccion);// es tu post
+        }   
       }
     }
 
