@@ -1,5 +1,6 @@
 import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_accion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_material.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_plaga.dart';
@@ -9,6 +10,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
