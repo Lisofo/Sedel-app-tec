@@ -81,10 +81,10 @@ class _PlagasPageState extends State<PlagasPage> {
     
     if(isConnected){
       plagas = await PlagaServices().getPlagas(token);
-      revisionPlagasList = await RevisionServices().getRevisionPlagas(orden, token);
+      revisionPlagasList = revision.revisionPlaga.isNotEmpty ? revision.revisionPlaga : await RevisionServices().getRevisionPlagas(orden, token);
       if(codigueras.values.whereType<Plaga>().toList().isEmpty){
         for(int i = 0; i<plagas.length; i++){
-          addListasToBoxCodiguera(plagas[i], null, null, null, null);
+          addListasToBoxCodiguera(plagas[i], null, null, null, null, null, null);
         }
       }
       if(orden.revision!.revisionPlaga.isEmpty){
@@ -122,24 +122,25 @@ class _PlagasPageState extends State<PlagasPage> {
             child: Column(
               children: [
                 Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width: 2,
-                            color: const Color.fromARGB(255, 52, 120, 62)),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: DropdownSearch(
-                      items: plagas,
-                      popupProps: const PopupProps.menu(
-                          showSearchBox: true, searchDelay: Duration.zero),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedPlaga = value;
-                        });
-                      },
-                    )),
-                const SizedBox(
-                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 2,
+                      color: const Color.fromARGB(255, 52, 120, 62)
+                    ),
+                    borderRadius: BorderRadius.circular(5)
+                  ),
+                  child: DropdownSearch(
+                    items: plagas,
+                    popupProps: const PopupProps.menu(
+                      showSearchBox: true, searchDelay: Duration.zero),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedPlaga = value;
+                      });
+                    },
+                  )
                 ),
+                const SizedBox(height: 30,),
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(

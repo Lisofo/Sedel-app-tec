@@ -60,7 +60,7 @@ class _TareasPageState extends State<TareasPage> {
       revisionTareasList = await RevisionServices().getRevisionTareas(orden, token);
       if(codigueras.values.whereType<Tarea>().toList().isEmpty){
         for(int i = 0; i<tareas.length; i++){
-          addListasToBoxCodiguera(null, tareas[i], null, null, null);
+          addListasToBoxCodiguera(null, tareas[i], null, null, null, null, null);
         }
       }
       if(orden.revision!.revisionPlaga.isEmpty){
@@ -330,7 +330,7 @@ class _TareasPageState extends State<TareasPage> {
     for(int i = 0; i < revisionSeleccionada.revisionTarea.length; i++){
       RevisionTarea tarea = revisionSeleccionada.revisionTarea[i];
       if(tarea.otTareaId == 0){
-        await RevisionServices().postRevisionTarea(context, orden, tarea.tareaId, tarea, token);
+        await RevisionServices().postRevisionTarea(context, orden, tarea, token);
       }
     }
     RevisionServices.showDialogs(context, 'Tarea Guardada', false, false);

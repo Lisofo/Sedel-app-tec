@@ -36,9 +36,7 @@ class PlagaServices {
 
   Future<List<Plaga>> getPlagasOffline() async {
     List<Plaga> listaPlagasOffline = [];
-
     listaPlagasOffline = codigueras.values.whereType<Plaga>().toList();
-    print(listaPlagasOffline.length);
     return listaPlagasOffline;
   }
 
@@ -83,5 +81,11 @@ class PlagaServices {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future getPlagasObjetivoOffline() async {
+    List<PlagaObjetivo> listaPlagasObjetivoOffline = [];
+    listaPlagasObjetivoOffline = codigueras.values.whereType<PlagaObjetivo>().toList();
+    return listaPlagasObjetivoOffline;
   }
 }

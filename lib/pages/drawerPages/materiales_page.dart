@@ -63,15 +63,16 @@ class _MaterialesPageState extends State<MaterialesPage> {
     
     if(isConnected){
       materiales = await MaterialesServices().getMateriales(token);
+      metodosAplicacion = await MaterialesServices().getMetodosAplicacion(token);
       revisionMaterialesList = await MaterialesServices().getRevisionMateriales(orden, token);
       if(codigueras.values.whereType<Materiales>().toList().isEmpty){
         for(int i = 0; i < materiales.length; i++){
-          addListasToBoxCodiguera(null, null, materiales[i], null, null);
+          addListasToBoxCodiguera(null, null, materiales[i], null, null, null, null);
         }
       }
 
       for(int i = 0; i < metodosAplicacion.length; i++){
-        addListasToBoxCodiguera(null, null, null, null, metodosAplicacion[i]);
+        addListasToBoxCodiguera(null, null, null, null, metodosAplicacion[i], null, null);
       }
 
       if(orden.revision!.revisionMaterial.isEmpty){
@@ -98,9 +99,8 @@ class _MaterialesPageState extends State<MaterialesPage> {
     if(isConnected){
       plagas = await PlagaServices().getPlagas(token);
       lotes = await MaterialesServices().getLotes(selectedMaterial.materialId, token);
-      metodosAplicacion = await MaterialesServices().getMetodosAplicacion(token); 
       for(int i = 0; i < lotes.length; i++){
-        addListasToBoxCodiguera(null, null, null, lotes[i], null);
+        addListasToBoxCodiguera(null, null, null, lotes[i], null, null, null);
       }
     }else{
       plagas = await PlagaServices().getPlagasOffline();
@@ -157,16 +157,14 @@ class _MaterialesPageState extends State<MaterialesPage> {
                     });
                   },
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
+                const SizedBox(height: 16,),
                 const Text('Plagas:'),
                 DropdownSearch<Plaga>.multiSelection(
                   items: plagas,
                   popupProps: const PopupPropsMultiSelection.menu(
-                      // showSelectedItems: true,
-                      // disabledItemFn: (String s) => s.startsWith('I'),
-                      ),
+                    // showSelectedItems: true,
+                    // disabledItemFn: (String s) => s.startsWith('I'),
+                    ),
                   onChanged: (value) {
                     plagasSeleccionadas = (value);
                   },

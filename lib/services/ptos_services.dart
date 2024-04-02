@@ -9,6 +9,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../offline/boxes.dart';
+
 class PtosInspeccionServices {
   final _dio = Dio();
   String apiUrl = Config.APIURL;
@@ -85,6 +87,12 @@ class PtosInspeccionServices {
     }
   }
 
+  Future getTiposPtosInspeccionOffline() async {
+    List<TipoPtosInspeccion> listaTipoPtosInspeccion = [];
+    listaTipoPtosInspeccion = codigueras.values.whereType<TipoPtosInspeccion>().toList();
+    return listaTipoPtosInspeccion;
+  }
+
   Future getPtosInspeccion(BuildContext context, Orden orden, String token) async {
     String link = '${apiUrl}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/puntos/acciones/';
 
@@ -98,9 +106,7 @@ class PtosInspeccionServices {
         ),
       );
       final List ptoInspeccionList = resp.data;
-      var retorno = ptoInspeccionList
-          .map((e) => RevisionPtoInspeccion.fromJson(e))
-          .toList();
+      var retorno = ptoInspeccionList.map((e) => RevisionPtoInspeccion.fromJson(e)).toList();
 
       Provider.of<OrdenProvider>(context, listen: false).setPI(retorno);
 

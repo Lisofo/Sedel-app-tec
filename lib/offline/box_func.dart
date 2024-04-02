@@ -1,6 +1,8 @@
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 
 import '../models/lote.dart';
 import '../models/metodo_aplicacion.dart';
@@ -13,7 +15,7 @@ Future<void> addOrdenesToBox(Orden orden) async {
 }
 
 Future<void> addListasToBoxCodiguera(
-  Plaga? plaga, Tarea? tarea, Materiales? materiales, Lote? lote, MetodoAplicacion? metodoAplicacion ) async {
+  Plaga? plaga, Tarea? tarea, Materiales? materiales, Lote? lote, MetodoAplicacion? metodoAplicacion, PlagaObjetivo? plagaObjetivo, TipoPtosInspeccion? tipoPtosInspeccion ) async {
   if(plaga != null){
     await codigueras.add(plaga);
   }
@@ -28,6 +30,12 @@ Future<void> addListasToBoxCodiguera(
   }
   if(metodoAplicacion != null){
     await codigueras.add(metodoAplicacion);
+  }
+  if(plagaObjetivo != null){
+    await codigueras.add(plagaObjetivo);
+  }
+  if(tipoPtosInspeccion != null){
+    await codigueras.add(tipoPtosInspeccion);
   }
   
 }
