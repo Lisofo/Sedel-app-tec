@@ -5,7 +5,6 @@ import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
-import 'package:app_tecnicos_sedel_wifiless/providers/puntos_inspeccion_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -117,25 +116,20 @@ class PtosInspeccionServices {
     }
   }
 
-  Future postPtoInspeccionAccion(BuildContext context, Orden orden,
-      RevisionPtoInspeccion revisionPtoInspeccion, String token) async {
-    String link =
-        '${apiUrl}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/puntos/${revisionPtoInspeccion.puntoInspeccionId}/acciones';
+  Future postPtoInspeccionAccion(BuildContext context, Orden orden, RevisionPtoInspeccion revisionPtoInspeccion, String token) async {
+    String link = '${apiUrl}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/puntos/${revisionPtoInspeccion.puntoInspeccionId}/acciones';
     print(link);
 
     var data;
     switch (revisionPtoInspeccion.idPIAccion) {
       case 1:
-        data =
-            ({"idPIAccion": 1, "comentario": revisionPtoInspeccion.comentario});
+        data = ({"idPIAccion": 1, "comentario": revisionPtoInspeccion.comentario});
         break;
       case 4:
-        data =
-            ({"idPIAccion": 4, "comentario": revisionPtoInspeccion.comentario});
+        data = ({"idPIAccion": 4, "comentario": revisionPtoInspeccion.comentario});
         break;
       case 7:
-        data =
-            ({"idPIAccion": 7, "comentario": revisionPtoInspeccion.comentario});
+        data = ({"idPIAccion": 7, "comentario": revisionPtoInspeccion.comentario});
         break;
       case 2:
         data = ({
