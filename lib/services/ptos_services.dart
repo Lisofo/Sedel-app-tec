@@ -222,8 +222,64 @@ class PtosInspeccionServices {
     RevisionPtoInspeccion ptoAEditar;
     
     ptoAEditar = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).where(
-      (puntoInspeccion) => puntoInspeccion.puntoInspeccionId == nuevaRevisionPtoInspeccion.puntoInspeccionId).toList()[0];
+    (puntoInspeccion) => puntoInspeccion.puntoInspeccionId == nuevaRevisionPtoInspeccion.puntoInspeccionId).toList()[0];
 
+    switch (nuevaRevisionPtoInspeccion.idPIAccion) {
+      case 1:
+        ptoAEditar.comentario = nuevaRevisionPtoInspeccion.comentario;
+        ptoAEditar.piAccionId = 1;
+        break;
+      case 4:
+        ptoAEditar.comentario = nuevaRevisionPtoInspeccion.comentario;
+        ptoAEditar.piAccionId = 4;
+        break;
+      case 7:
+        ptoAEditar.comentario = nuevaRevisionPtoInspeccion.comentario;
+        ptoAEditar.piAccionId = 7;
+        break;
+      // case 2:
+      //   ptoAEditar.piAccionId = 2;
+      //   ptoAEditar = ({
+      //     "comentario": "actividad",
+      //     "materiales": nuevaRevisionPtoInspeccion.materiales
+      //         .map((material) => material.toMap())
+      //         .toList(),
+      //     "tareas": nuevaRevisionPtoInspeccion.tareas
+      //         .map((tarea) => tarea.toMap())
+      //         .toList(),
+      //     "plagas": nuevaRevisionPtoInspeccion.plagas
+      //         .map((plaga) => plaga.toMap())
+      //         .toList()
+      //   });
+      //   break;
+      // case 3:
+      //   ptoAEditar = ({
+      //     "idPIAccion": 3,
+      //     "comentario": "mantenimiento",
+      //     "materiales": nuevaRevisionPtoInspeccion.materiales
+      //         .map((material) => material.toMap())
+      //         .toList(),
+      //     "tareas": nuevaRevisionPtoInspeccion.tareas
+      //         .map((tarea) => tarea.toMap())
+      //         .toList(),
+      //   });
+      case 6:
+        ptoAEditar.piAccionId = 6;
+        ptoAEditar.comentario =  nuevaRevisionPtoInspeccion.comentario;
+        ptoAEditar.zona = nuevaRevisionPtoInspeccion.zona;
+        ptoAEditar.sector = nuevaRevisionPtoInspeccion.sector;
+        break;
+      case 5:
+        ptoAEditar.piAccionId = 5;
+        ptoAEditar.comentario = nuevaRevisionPtoInspeccion.comentario;
+        ptoAEditar.tipoPuntoInspeccionId = nuevaRevisionPtoInspeccion.tipoPuntoInspeccionId;
+        ptoAEditar.plagaObjetivoId = nuevaRevisionPtoInspeccion.plagaObjetivoId;
+        ptoAEditar.codPuntoInspeccion = nuevaRevisionPtoInspeccion.codPuntoInspeccion;
+        ptoAEditar.codigoBarra = nuevaRevisionPtoInspeccion.codigoBarra;
+        ptoAEditar.zona = nuevaRevisionPtoInspeccion.zona;
+        ptoAEditar.sector = nuevaRevisionPtoInspeccion.sector;
+        break;
+    }
 
   }
 
