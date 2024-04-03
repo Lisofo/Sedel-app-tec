@@ -25,13 +25,14 @@ class MaterialesAdapter extends TypeAdapter<Materiales> {
       fabProv: fields[5] as String,
       enAppTecnico: fields[6] as String,
       enUso: fields[7] as String,
+      lotes: (fields[8] as List?)?.cast<Lote>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Materiales obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.materialId)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class MaterialesAdapter extends TypeAdapter<Materiales> {
       ..writeByte(6)
       ..write(obj.enAppTecnico)
       ..writeByte(7)
-      ..write(obj.enUso);
+      ..write(obj.enUso)
+      ..writeByte(8)
+      ..write(obj.lotes);
   }
 
   @override

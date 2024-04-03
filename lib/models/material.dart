@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:hive/hive.dart';
 part 'material.g.dart';
 
@@ -26,6 +27,8 @@ class Materiales extends HiveObject {
   late String enAppTecnico;
   @HiveField(7)
   late String enUso;
+  @HiveField(8)
+  late List<Lote>? lotes;
 
   Materiales({
     required this.materialId,
@@ -36,6 +39,7 @@ class Materiales extends HiveObject {
     required this.fabProv,
     required this.enAppTecnico,
     required this.enUso,
+    required this.lotes,
   });
 
   factory Materiales.fromJson(Map<String, dynamic> json) => Materiales(
@@ -47,6 +51,7 @@ class Materiales extends HiveObject {
         fabProv: json["fabProv"] as String? ?? '',
         enAppTecnico: json["enAppTecnico"] as String? ?? '',
         enUso: json["enUso"] as String? ?? '',
+        lotes: List<Lote>.from(json["lotes"].map((x)=> Lote.fromJson(x))).toList(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -69,6 +74,7 @@ class Materiales extends HiveObject {
     fabProv = '';
     enAppTecnico = '';
     enUso = '';
+    lotes = [];
   }
 
   @override

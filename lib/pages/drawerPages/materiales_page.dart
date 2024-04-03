@@ -19,6 +19,7 @@ import 'package:provider/provider.dart';
 import '../../models/lote.dart';
 import '../../models/metodo_aplicacion.dart';
 import '../../models/revision.dart';
+import '../../widgets/custom_button.dart';
 
 class MaterialesPage extends StatefulWidget {
   const MaterialesPage({super.key});
@@ -31,7 +32,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
   late List<String> savedData = [];
   List<Materiales> materiales = [];
   List<MetodoAplicacion> metodosAplicacion = [];
-  late List<Lote> lotes = [];
+  late List<Lote>? lotes = [];
   late List<Plaga> plagas = [];
   late List<Plaga> plagasSeleccionadas = [];
   late List<RevisionMaterial> revisionMaterialesList = [];
@@ -62,7 +63,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
     
     if(isConnected){
-      materiales = await MaterialesServices().getMateriales(token);
+      materiales = await MaterialesServices().getMaterialesConLotes(token);
       metodosAplicacion = await MaterialesServices().getMetodosAplicacion(token);
       revisionMaterialesList = await MaterialesServices().getRevisionMateriales(orden, token);
       if(codigueras.values.whereType<Materiales>().toList().isEmpty){
@@ -99,12 +100,10 @@ class _MaterialesPageState extends State<MaterialesPage> {
     if(isConnected){
       plagas = await PlagaServices().getPlagas(token);
       lotes = await MaterialesServices().getLotes(selectedMaterial.materialId, token);
-      for(int i = 0; i < lotes.length; i++){
-        addListasToBoxCodiguera(null, null, null, lotes[i], null, null, null);
-      }
+      
     }else{
-      plagas = await PlagaServices().getPlagasOffline();
-      lotes = await MaterialesServices().getLotesOffline(selectedMaterial.materialId);
+      plagas = await PlagaServices().getPlagasOffline(); 
+      lotes = selectedMaterial.lotes;
       metodosAplicacion = await MaterialesServices().getMetodosAplicacionOffline();
     }
 
@@ -140,7 +139,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                 const SizedBox(height: 16),
                 const Text('Lote:'),
                 DropdownSearch(
-                  items: lotes,
+                  items: lotes!,
                   onChanged: (newValue) {
                     setState(() {
                       selectedLote = newValue;
@@ -196,6 +195,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                 child: const Text('Guardar'),
                 onPressed: () async {
                   await posteoRevisionMateriales(material, context);
+                  router.pop();
                 },
               ),
             ],
@@ -256,6 +256,24 @@ class _MaterialesPageState extends State<MaterialesPage> {
                   isExpanded: true,
                 ),
               ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CustomButton(
+                      onPressed: () async {
+                        if(marcaId == 0){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Marque entrada antes de ingresar datos.'),
+                          ));
+                          return Future.value(false);
+                        }
+                        await posteoDeBox(context);
+                      },
+                      text: 'Sincronizar',
+                      tamano: 20,
+                    ),
+                  ],
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -486,6 +504,8 @@ class _MaterialesPageState extends State<MaterialesPage> {
     }
     RevisionServices.showDialogs(context, 'Material guardado', false, false);
   }
+
+  
 
   bool esNumerico(String str) {
     return double.tryParse(str) != null;
