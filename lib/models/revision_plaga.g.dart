@@ -27,13 +27,14 @@ class RevisionPlagaAdapter extends TypeAdapter<RevisionPlaga> {
       gradoInfestacionId: fields[7] as int,
       codGradoInfestacion: fields[8] as String,
       gradoInfestacion: fields[9] as String,
+      hiveKey: fields[10] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, RevisionPlaga obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.otPlagaId)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class RevisionPlagaAdapter extends TypeAdapter<RevisionPlaga> {
       ..writeByte(8)
       ..write(obj.codGradoInfestacion)
       ..writeByte(9)
-      ..write(obj.gradoInfestacion);
+      ..write(obj.gradoInfestacion)
+      ..writeByte(10)
+      ..write(obj.hiveKey);
   }
 
   @override

@@ -371,7 +371,8 @@ class _PlagasPageState extends State<PlagasPage> {
       plaga: selectedPlaga.descripcion,
       gradoInfestacionId: selectedGrado.gradoInfestacionId,
       codGradoInfestacion: selectedGrado.codGradoInfestacion,
-      gradoInfestacion: selectedGrado.descripcion
+      gradoInfestacion: selectedGrado.descripcion,
+      hiveKey: 0,
     );
 
     if(isConnected){
@@ -381,6 +382,7 @@ class _PlagasPageState extends State<PlagasPage> {
       RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
+      
     }
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
