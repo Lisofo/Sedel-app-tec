@@ -22,6 +22,4 @@ class Pendiente extends HiveObject {
     required this.pendientePut,
   });
 
-
-
 }
