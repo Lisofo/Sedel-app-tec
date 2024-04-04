@@ -1,5 +1,9 @@
 import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendienteDelete.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendientePost.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendientePut.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_accion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_material.dart';
@@ -97,6 +101,10 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(PtoAccionAdapter());
   Hive.registerAdapter(PlagaObjetivoAdapter());
   Hive.registerAdapter(TipoPtosInspeccionAdapter());
+  Hive.registerAdapter(PendienteAdapter());
+  Hive.registerAdapter(PendienteDeleteAdapter());
+  Hive.registerAdapter(PendientePostAdapter());
+  Hive.registerAdapter(PendientePutAdapter());
   
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
   //boxOrdenes.clear();
@@ -104,4 +112,6 @@ Future<void> cargarHive() async {
   //codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
   // revisiones.clear();
+  boxPendientes = await Hive.openBox('pendientesBox');
+  //boxPendientes.clear();
 }
