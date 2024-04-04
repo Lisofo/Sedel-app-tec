@@ -640,22 +640,23 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CustomDropdownFormMenu(
-                        hint: 'Zona',
-                        value: zonaSeleccionada.codZona != ''
-                            ? zonaSeleccionada
-                            : null,
-                        items: zonas.map((e) {
-                          return DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e.zona,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          zonaSeleccionada = value;
-                        }),
+                      hint: 'Zona',
+                      value: zonaSeleccionada.codZona != ''
+                          ? zonaSeleccionada
+                          : null,
+                      items: zonas.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e.zona,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        zonaSeleccionada = value;
+                      }
+                    ),
                     const SizedBox(height: 10),
                     CustomTextFormField(
                       controller: sectorController,
@@ -789,29 +790,30 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
 
   Future marcarPINuevo(int idPIAccion, ZonaPI zonaSeleccionada, String sector, String comentario) async {
     RevisionPtoInspeccion nuevaRevisionPtoInspeccion = RevisionPtoInspeccion(
-        otPuntoInspeccionId: puntosSeleccionados.isNotEmpty ? puntosSeleccionados[0].otPuntoInspeccionId : 0,
-        ordenTrabajoId: orden.ordenTrabajoId,
-        otRevisionId: orden.otRevisionId,
-        puntoInspeccionId: 0,
-        planoId: 0,
-        tipoPuntoInspeccionId: selectedTipoPto.tipoPuntoInspeccionId,
-        codTipoPuntoInspeccion: '',
-        descTipoPuntoInspeccion: '',
-        plagaObjetivoId: plagaObjetivoSeleccionada.plagaObjetivoId,
-        codPuntoInspeccion: codPuntoInspeccionController.text,
-        codigoBarra: codigoBarraController.text,
-        zona: zonaSeleccionada.codZona,
-        sector: sector,
-        idPIAccion: idPIAccion,
-        piAccionId: 1,
-        codAccion: '1',
-        descPiAccion: '',
-        comentario: comentario,
-        materiales: [],
-        plagas: [],
-        tareas: [],
-        trasladoNuevo: [],
-        seleccionado: false);
+      otPuntoInspeccionId: puntosSeleccionados.isNotEmpty ? puntosSeleccionados[0].otPuntoInspeccionId : 0,
+      ordenTrabajoId: orden.ordenTrabajoId,
+      otRevisionId: orden.otRevisionId,
+      puntoInspeccionId: 0,
+      planoId: 0,
+      tipoPuntoInspeccionId: selectedTipoPto.tipoPuntoInspeccionId,
+      codTipoPuntoInspeccion: '',
+      descTipoPuntoInspeccion: '',
+      plagaObjetivoId: plagaObjetivoSeleccionada.plagaObjetivoId,
+      codPuntoInspeccion: codPuntoInspeccionController.text,
+      codigoBarra: codigoBarraController.text,
+      zona: zonaSeleccionada.codZona,
+      sector: sector,
+      idPIAccion: idPIAccion,
+      piAccionId: 1,
+      codAccion: '1',
+      descPiAccion: '',
+      comentario: comentario,
+      materiales: [],
+      plagas: [],
+      tareas: [],
+      trasladoNuevo: [],
+      seleccionado: false
+    );
 
     if (nuevaRevisionPtoInspeccion.otPuntoInspeccionId != 0) {
       await PtosInspeccionServices().putPtoInspeccionAccion(
