@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 part 'pendiente.g.dart';
 
 @HiveType(typeId: 40)
-class Pendiente {
+class Pendiente extends HiveObject {
   @HiveField(0)
   late List<PendienteDelete> pendienteDelete;
   @HiveField(1)
