@@ -77,7 +77,7 @@ class _PlagasPageState extends State<PlagasPage> {
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-    pendiente = boxPendientes.values.where((pendiente) => pendiente.ordenId == orden.ordenTrabajoId).toList()[0];
+    pendiente = pendientesBox.values.where((pendiente) => pendiente.ordenId == orden.ordenTrabajoId).toList()[0];
     // if (orden.estado == "EN PROCESO" && marcaId != 0) {
     //   isReadOnly = false;
     // }
