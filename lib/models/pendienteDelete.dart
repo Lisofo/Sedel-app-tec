@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 part 'pendienteDelete.g.dart';
 
 @HiveType(typeId: 37)
-class PendienteDelete {
+class PendienteDelete extends HiveObject{
   @HiveField(0)
   late int ordenId;
   @HiveField(1)

@@ -20,6 +20,10 @@ class Pendiente extends HiveObject{
     required this.pendientePut,
   });
 
-
+  Pendiente.empty(){
+    pendienteDelete = [];
+    pendientePost = [];
+    pendientePut = [];
+  }
 
 }

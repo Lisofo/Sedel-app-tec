@@ -1,4 +1,5 @@
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
@@ -42,4 +43,8 @@ Future<void> addListasToBoxCodiguera(
 
 Future<void> addToBoxRevisiones(Revision revision) async{
   revisiones.put('${revision.otOrdenId}', revision);
+}
+
+Future<void> addToBoxPendientes(Pendiente pendiente) async {
+  await boxPendientes.add(pendiente);
 }

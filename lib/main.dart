@@ -15,6 +15,8 @@ import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
+import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
+import 'package:app_tecnicos_sedel_wifiless/pages/pages.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +42,6 @@ import 'models/revision_tarea.dart';
 
 Future<void> main() async {
   await cargarHive(); 
-
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -113,5 +114,5 @@ Future<void> cargarHive() async {
   revisiones = await Hive.openBox('revisionesBox');
   // revisiones.clear();
   boxPendientes = await Hive.openBox('pendientesBox');
-  //boxPendientes.clear();
+  boxPendientes.clear();
 }

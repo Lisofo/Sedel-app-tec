@@ -9,7 +9,7 @@ import 'package:hive/hive.dart';
 part 'pendientePut.g.dart';
 
 @HiveType(typeId: 38)
-class PendientePut {
+class PendientePut extends HiveObject{
   @HiveField(0)
   late int ordenId;
   @HiveField(1)
