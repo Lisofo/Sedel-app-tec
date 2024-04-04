@@ -8,7 +8,7 @@ part of 'pendiente.dart';
 
 class PendienteAdapter extends TypeAdapter<Pendiente> {
   @override
-  final int typeId = 40;
+  final int typeId = 37;
 
   @override
   Pendiente read(BinaryReader reader) {
@@ -17,28 +17,25 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Pendiente(
-      pendienteDelete: (fields[0] as List).cast<PendienteDelete>(),
-      pendientePost: (fields[1] as List).cast<PendientePost>(),
-      pendientePut: (fields[2] as List).cast<PendientePut>(),
-      ordenId: fields[3] as int,
-      otRevisionId: fields[4] as int,
+      ordenId: fields[0] as int?,
+      otRevisionId: fields[1] as int?,
+      listaPendientes: (fields[2] as List).cast<dynamic>(),
+      accion: fields[3] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Pendiente obj) {
     writer
-      ..writeByte(5)
-      ..writeByte(0)
-      ..write(obj.pendienteDelete)
-      ..writeByte(1)
-      ..write(obj.pendientePost)
-      ..writeByte(2)
-      ..write(obj.pendientePut)
-      ..writeByte(3)
-      ..write(obj.ordenId)
       ..writeByte(4)
-      ..write(obj.otRevisionId);
+      ..writeByte(0)
+      ..write(obj.ordenId)
+      ..writeByte(1)
+      ..write(obj.otRevisionId)
+      ..writeByte(2)
+      ..write(obj.listaPendientes)
+      ..writeByte(3)
+      ..write(obj.accion);
   }
 
   @override

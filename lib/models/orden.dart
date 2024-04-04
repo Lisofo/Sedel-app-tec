@@ -47,7 +47,7 @@ class Orden extends HiveObject {
   @HiveField(13)
   late Revision? revision;
   @HiveField(14)
-  late Pendiente pendiente;
+  late Pendiente? pendiente;
 
   Orden({
     required this.ordenTrabajoId,

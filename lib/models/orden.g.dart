@@ -31,7 +31,7 @@ class OrdenAdapter extends TypeAdapter<Orden> {
       otRevisionId: fields[11] as int,
       planoId: fields[12] as int,
       revision: fields[13] as Revision?,
-      pendiente: fields[14] as Pendiente,
+      pendiente: fields[14] as Pendiente?,
     );
   }
 

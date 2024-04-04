@@ -1,9 +1,6 @@
 import 'package:app_tecnicos_sedel_wifiless/models/lote.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/metodo_aplicacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/pendienteDelete.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/pendientePost.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/pendientePut.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_accion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/pto_material.dart';
@@ -15,8 +12,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
-import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
-import 'package:app_tecnicos_sedel_wifiless/pages/pages.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +38,7 @@ import 'models/revision_tarea.dart';
 
 Future<void> main() async {
   await cargarHive(); 
+  
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -103,16 +100,13 @@ Future<void> cargarHive() async {
   Hive.registerAdapter(PlagaObjetivoAdapter());
   Hive.registerAdapter(TipoPtosInspeccionAdapter());
   Hive.registerAdapter(PendienteAdapter());
-  Hive.registerAdapter(PendienteDeleteAdapter());
-  Hive.registerAdapter(PendientePostAdapter());
-  Hive.registerAdapter(PendientePutAdapter());
-  
+
   boxOrdenes = await Hive.openBox<Orden>('ordenBox');
   //boxOrdenes.clear();
   codigueras = await Hive.openBox('codigueraBox');
   //codigueras.clear();
   revisiones = await Hive.openBox('revisionesBox');
   // revisiones.clear();
-  boxPendientes = await Hive.openBox('pendientesBox');
-  boxPendientes.clear();
+  pendientesBox = await Hive.openBox('boxPendientes');
+  
 }
