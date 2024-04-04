@@ -3,6 +3,7 @@
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/grado_infestacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
@@ -56,6 +57,7 @@ class _PlagasPageState extends State<PlagasPage> {
   // bool isReadOnly = true;
   late int marcaId = 0;
   late Revision revision = Revision.empty();
+  late Pendiente pendiente = Pendiente.empty();
 
   @override
   void initState() {
@@ -75,6 +77,7 @@ class _PlagasPageState extends State<PlagasPage> {
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    pendiente = boxPendientes.values.where((pendiente) => pendiente.ordenId == orden.ordenTrabajoId).toList()[0];
     // if (orden.estado == "EN PROCESO" && marcaId != 0) {
     //   isReadOnly = false;
     // }

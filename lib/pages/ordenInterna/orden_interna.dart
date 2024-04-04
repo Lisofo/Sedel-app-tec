@@ -187,9 +187,7 @@ class _OrdenInternaState extends State<OrdenInterna> {
                   orden.cliente.telefono1,
                   style: const TextStyle(fontSize: 16),
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     const Text(
