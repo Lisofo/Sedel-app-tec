@@ -47,13 +47,11 @@ class Marca extends HiveObject{
         hasta: json["hasta"] == null ? null : DateTime.parse(json["hasta"]),
         tecnicoId: json["tecnicoId"],
         codTecnico: json["codTecnico"] ?? '',
-        nombreTecnico:
-            json["nombreTecnico"] ?? '',
+        nombreTecnico: json["nombreTecnico"] ?? '',
         ubicacionId: json["ubicacionId"],
         ubicacion: json["ubicacion"] ?? '',
         ubicacionIdHasta: json["ubicacionIdHasta"],
-        ubicacionHasta:
-            json["ubicacionHasta"] ?? ''  ,
+        ubicacionHasta: json["ubicacionHasta"] ?? ''  ,
       );
 
   Map<String, dynamic> toMap() => {
