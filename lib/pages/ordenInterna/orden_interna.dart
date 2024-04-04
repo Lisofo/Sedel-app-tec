@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/ubicacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
@@ -33,6 +34,7 @@ class _OrdenInternaState extends State<OrdenInterna> {
   bool ejecutando = false;
   String token = '';
   late Revision revision = Revision.empty();
+  late Pendiente pendiente = Pendiente.empty();
 
   @override
   void initState() {
@@ -375,7 +377,11 @@ class _OrdenInternaState extends State<OrdenInterna> {
         await RevisionServices().postRevision(uId, orden, token);
         revision.otOrdenId = orden.ordenTrabajoId;
         revision.otRevisionId = orden.otRevisionId;
+        pendiente.ordenId = orden.ordenTrabajoId;
+        pendiente.otRevisionId = orden.otRevisionId;
         addToBoxRevisiones(revision);
+        addToBoxPendientes(pendiente);
+        
       }
       setState(() {});
 

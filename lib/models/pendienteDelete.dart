@@ -5,27 +5,22 @@ part 'pendienteDelete.g.dart';
 
 @HiveType(typeId: 37)
 class PendienteDelete extends HiveObject{
+  
   @HiveField(0)
-  late int ordenId;
-  @HiveField(1)
-  late int otRevisionId;
-  @HiveField(2)
   late List<int> materiales;
-  @HiveField(3)
+  @HiveField(1)
   late List<int> tareas;
-  @HiveField(4)
+  @HiveField(2)
   late List<int> plagas;
-  @HiveField(5)
+  @HiveField(3)
   late List<int> obsevacion;
-  @HiveField(6)
+  @HiveField(4)
   late List<int> firma;
   
 
  
 
   PendienteDelete ({
-    required this.ordenId,
-    required this.otRevisionId,
     required this.materiales,
     required this.tareas,
     required this.plagas,
@@ -34,8 +29,6 @@ class PendienteDelete extends HiveObject{
   });
 
   PendienteDelete.empty(){
-    ordenId = 0;
-    otRevisionId = 0;
     materiales = [];
     tareas = [];
     plagas = [];

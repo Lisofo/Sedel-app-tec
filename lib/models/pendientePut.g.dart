@@ -17,33 +17,27 @@ class PendientePutAdapter extends TypeAdapter<PendientePut> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PendientePut(
-      ordenId: fields[0] as int,
-      otRevisionId: fields[1] as int,
-      materiales: (fields[2] as List).cast<RevisionMaterial>(),
-      tareas: (fields[3] as List).cast<RevisionTarea>(),
-      plagas: (fields[4] as List).cast<RevisionPlaga>(),
-      obsevacion: (fields[5] as List).cast<Observacion>(),
-      firma: (fields[6] as List).cast<ClienteFirma>(),
+      materiales: (fields[0] as List).cast<RevisionMaterial>(),
+      tareas: (fields[1] as List).cast<RevisionTarea>(),
+      plagas: (fields[2] as List).cast<RevisionPlaga>(),
+      obsevacion: (fields[3] as List).cast<Observacion>(),
+      firma: (fields[4] as List).cast<ClienteFirma>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, PendientePut obj) {
     writer
-      ..writeByte(7)
-      ..writeByte(0)
-      ..write(obj.ordenId)
-      ..writeByte(1)
-      ..write(obj.otRevisionId)
-      ..writeByte(2)
-      ..write(obj.materiales)
-      ..writeByte(3)
-      ..write(obj.tareas)
-      ..writeByte(4)
-      ..write(obj.plagas)
       ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.materiales)
+      ..writeByte(1)
+      ..write(obj.tareas)
+      ..writeByte(2)
+      ..write(obj.plagas)
+      ..writeByte(3)
       ..write(obj.obsevacion)
-      ..writeByte(6)
+      ..writeByte(4)
       ..write(obj.firma);
   }
 

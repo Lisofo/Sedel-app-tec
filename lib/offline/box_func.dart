@@ -7,6 +7,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
 
 import '../models/lote.dart';
 import '../models/metodo_aplicacion.dart';
+import '../models/pendiente.dart';
 import 'boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
@@ -41,10 +42,10 @@ Future<void> addListasToBoxCodiguera(
   
 }
 
-Future<void> addToBoxRevisiones(Revision revision) async{
-  revisiones.put('${revision.otOrdenId}', revision);
+Future<void> addToBoxRevisiones(Revision? revision) async{
+  revisiones.put('${revision?.otOrdenId}', revision);
 }
 
 Future<void> addToBoxPendientes(Pendiente pendiente) async {
-  await boxPendientes.add(pendiente);
+  await boxPendientes.put('${pendiente.ordenId}',pendiente);
 }
