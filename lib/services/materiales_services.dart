@@ -83,6 +83,27 @@ class MaterialesServices {
     }
   }
 
+  Future getMaterialesConLotes(String token) async {
+    String link = '${apiUrl}api/v1/materiales/con-lotes';
+    try {
+      var headers = {'Authorization': token};
+      var resp = await _dio.request(
+        link,
+        options: Options(
+          method: 'GET',
+          headers: headers,
+        ),
+      );
+
+      final List<dynamic> materialList = resp.data;
+
+      return materialList.map((obj) => Materiales.fromJson(obj)).toList();
+    } catch (e) {
+      print(e);
+    }
+
+  }
+
   Future<List<Materiales>> getMaterialesOffline(String token) async {
     List<Materiales> listaMaterialesOffline = [];
     listaMaterialesOffline = codigueras.values.whereType<Materiales>().toList();

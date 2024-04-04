@@ -19,17 +19,20 @@ class LoteAdapter extends TypeAdapter<Lote> {
     return Lote(
       materialLoteId: fields[0] as int,
       lote: fields[1] as String,
+      estado: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Lote obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.materialLoteId)
       ..writeByte(1)
-      ..write(obj.lote);
+      ..write(obj.lote)
+      ..writeByte(2)
+      ..write(obj.estado);
   }
 
   @override
