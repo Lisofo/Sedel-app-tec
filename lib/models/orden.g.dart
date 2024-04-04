@@ -31,13 +31,14 @@ class OrdenAdapter extends TypeAdapter<Orden> {
       otRevisionId: fields[11] as int,
       planoId: fields[12] as int,
       revision: fields[13] as Revision?,
+      pendiente: fields[14] as Pendiente,
     );
   }
 
   @override
   void write(BinaryWriter writer, Orden obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.ordenTrabajoId)
       ..writeByte(1)
@@ -65,7 +66,9 @@ class OrdenAdapter extends TypeAdapter<Orden> {
       ..writeByte(12)
       ..write(obj.planoId)
       ..writeByte(13)
-      ..write(obj.revision);
+      ..write(obj.revision)
+      ..writeByte(14)
+      ..write(obj.pendiente);
   }
 
   @override

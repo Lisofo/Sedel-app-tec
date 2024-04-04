@@ -95,7 +95,7 @@ class _ListaOrdenesState extends State<ListaOrdenes> {
         ordenes[i].revision?.revisionObservacion = await RevisionServices().getObservacion(ordenes[i], token);
         // ordenes[i].revision?.revisionFirma = await RevisionServices().getRevisionFirmas(ordenes[i], token);
         ordenes[i].revision?.revisionPtoInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, ordenes[i], token);
-        // addToBoxRevisiones(ordenes[i].revision);
+        addToBoxRevisiones(ordenes[i].revision);
       }
     }
     cargando = false; 

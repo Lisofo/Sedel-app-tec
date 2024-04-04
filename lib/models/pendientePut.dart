@@ -11,26 +11,20 @@ part 'pendientePut.g.dart';
 @HiveType(typeId: 38)
 class PendientePut extends HiveObject {
   @HiveField(0)
-  late int ordenId;
-  @HiveField(1)
-  late int otRevisionId;
-  @HiveField(2)
   late List<RevisionMaterial> materiales;
-  @HiveField(3)
+  @HiveField(1)
   late List<RevisionTarea> tareas;
-  @HiveField(4)
+  @HiveField(2)
   late List<RevisionPlaga> plagas;
-  @HiveField(5)
+  @HiveField(3)
   late List<Observacion> obsevacion;
-  @HiveField(6)
+  @HiveField(4)
   late List<ClienteFirma> firma;
   
 
  
 
   PendientePut ({
-    required this.ordenId,
-    required this.otRevisionId,
     required this.materiales,
     required this.tareas,
     required this.plagas,
@@ -39,8 +33,6 @@ class PendientePut extends HiveObject {
   });
 
   PendientePut.empty(){
-    ordenId = 0;
-    otRevisionId = 0;
     materiales = [];
     tareas = [];
     plagas = [];

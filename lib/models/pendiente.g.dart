@@ -20,19 +20,25 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
       pendienteDelete: (fields[0] as List).cast<PendienteDelete>(),
       pendientePost: (fields[1] as List).cast<PendientePost>(),
       pendientePut: (fields[2] as List).cast<PendientePut>(),
+      ordenId: fields[3] as int,
+      otRevisionId: fields[4] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Pendiente obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.pendienteDelete)
       ..writeByte(1)
       ..write(obj.pendientePost)
       ..writeByte(2)
-      ..write(obj.pendientePut);
+      ..write(obj.pendientePut)
+      ..writeByte(3)
+      ..write(obj.ordenId)
+      ..writeByte(4)
+      ..write(obj.otRevisionId);
   }
 
   @override
