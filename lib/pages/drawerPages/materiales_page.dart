@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, avoid_init_to_null, void_checks
+// ignore_for_file: use_build_context_synchronously, avoid_init_to_null, void_checks, unused_local_variable
 
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';

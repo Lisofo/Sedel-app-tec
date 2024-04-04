@@ -1,5 +1,5 @@
+import 'package:app_tecnicos_sedel_wifiless/models/clientes_firmas.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/observacion.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/revision_firmas.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
@@ -18,7 +18,7 @@ class Revision extends HiveObject {
   @HiveField(3)
   late List<RevisionMaterial> revisionMaterial;
   @HiveField(4)
-  late List<RevisionFirmas> revisionFirma;
+  late List<ClienteFirma> revisionFirma;
   @HiveField(5)
   late List<RevisionPtoInspeccion> revisionPtoInspeccion;
   @HiveField(6)

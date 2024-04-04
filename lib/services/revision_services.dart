@@ -418,25 +418,32 @@ class RevisionServices {
   Future postRevisonFirma(BuildContext context, Orden orden, ClienteFirma firma, String token) async {
     String link = '${apiLink}api/v1/ordenes/${orden.ordenTrabajoId}/revisiones/${orden.otRevisionId}/firmas';
 
-    var data = firma.toMap();
+    FormData formData = FormData.fromMap({
+      'file': MultipartFile.fromBytes(firma.firma as List<int>, filename: 'imagen.jpg'),
+      'nombre': firma.nombre,
+      'area': firma.area,
+      'firmaMD5': firma.firmaMd5,
+      'comentario': ''
+    });
 
     try {
       var headers = {'Authorization': token};
-      var resp = await _dio.request(
+      var resp = await _dio.post(
         link,
+        data: formData,
         options: Options(
-          method: 'POST',
+          contentType: 'multipart/form-data',
           headers: headers,
         ),
-        data: data,
       );
       statusCode = resp.statusCode;
-      if (resp.statusCode == 201) {
+      if (statusCode == 201) {
         firma.otFirmaId = resp.data["otFirmaId"];
         showDialogs(context, 'Firma guardada', false, false);
+        print('posteo $statusCode');
       }
-
-      return;
+      print('termino posteo $statusCode');
+      return; 
     } catch (e) {
       if (e is DioException) {
         if (e.response != null) {
@@ -511,6 +518,12 @@ class RevisionServices {
         }
       }
     }
+  }
+
+  Future deleteRevisionFirmaOffline(Orden orden, ClienteFirma revisionFirma) async {
+    Revision revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    revision.revisionFirma.removeWhere((firma) => firma.otFirmaId == revisionFirma.otFirmaId);
+    print('Firma eliminada con éxito');
   }
 
   Future putRevisionFirma(BuildContext context, Orden orden, ClienteFirma revisionFirma, String token) async {
