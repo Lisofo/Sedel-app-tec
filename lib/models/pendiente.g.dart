@@ -19,7 +19,7 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
     return Pendiente(
       ordenId: fields[0] as int?,
       otRevisionId: fields[1] as int?,
-      listaPendientes: (fields[2] as List).cast<dynamic>(),
+      objeto: fields[2] as dynamic,
       accion: fields[3] as int,
     );
   }
@@ -33,7 +33,7 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
       ..writeByte(1)
       ..write(obj.otRevisionId)
       ..writeByte(2)
-      ..write(obj.listaPendientes)
+      ..write(obj.objeto)
       ..writeByte(3)
       ..write(obj.accion);
   }

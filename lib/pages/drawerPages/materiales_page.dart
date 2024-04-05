@@ -470,7 +470,8 @@ class _MaterialesPageState extends State<MaterialesPage> {
             plagas: plagasSeleccionadas,
             material: material,
             lote: selectedLote!,
-            metodoAplicacion: selectedMetodo!);
+            metodoAplicacion: selectedMetodo!,
+            hiveKey: 0);
 
     for (var i = 0; i < plagasSeleccionadas.length; i++) {
       plagasIds.add(plagasSeleccionadas[i].plagaId);

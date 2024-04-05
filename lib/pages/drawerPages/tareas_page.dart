@@ -307,7 +307,8 @@ class _TareasPageState extends State<TareasPage> {
       tareaId: selectedTarea.tareaId,
       codTarea: selectedTarea.codTarea,
       descripcion: selectedTarea.descripcion,
-      comentario: '');
+      comentario: '',
+      hiveKey: 0);
 
     if(isConnected){
       revisionSeleccionada.revisionTarea.add(nuevaTarea);

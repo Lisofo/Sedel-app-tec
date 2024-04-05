@@ -12,21 +12,21 @@ class Pendiente extends HiveObject {
   @HiveField(1)
   late int? otRevisionId;
   @HiveField(2)
-  late List<dynamic> listaPendientes;
+  late dynamic objeto;
   @HiveField(3)
   late int accion;
 
   Pendiente ({
     required this.ordenId,
     required this.otRevisionId,
-    required this.listaPendientes,
+    required this.objeto,
     required this.accion,
   });
 
   Pendiente.empty(){
     ordenId = 0;
     otRevisionId = 0;
-    listaPendientes = [];
+    objeto = null;
     accion = 0;
   }
 

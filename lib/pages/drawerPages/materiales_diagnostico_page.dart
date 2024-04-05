@@ -119,7 +119,8 @@ class _MaterialesDiagnosticoPageState extends State<MaterialesDiagnosticoPage> {
                         plagas: [],
                         material: material,
                         lote: Lote.empty(),
-                        metodoAplicacion: MetodoAplicacion.empty());
+                        metodoAplicacion: MetodoAplicacion.empty(),
+                        hiveKey: 0);
                 await MaterialesDiagnosticoServices().postRevisionMaterial(
                     context, orden, nuevaRevisionMaterial, token);
                 revisionMaterialesList.add(nuevaRevisionMaterial);
