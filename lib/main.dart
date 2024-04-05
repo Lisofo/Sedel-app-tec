@@ -38,6 +38,9 @@ import 'models/revision_tarea.dart';
 
 Future<void> main() async {
   await cargarHive(); 
+
+    
+
   
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
