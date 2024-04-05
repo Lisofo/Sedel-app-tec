@@ -21,7 +21,7 @@ class RevisionAdapter extends TypeAdapter<Revision> {
       otOrdenId: fields[1] as int,
       revisionPlaga: (fields[2] as List).cast<RevisionPlaga>(),
       revisionMaterial: (fields[3] as List).cast<RevisionMaterial>(),
-      revisionFirma: (fields[4] as List).cast<RevisionFirmas>(),
+      revisionFirma: (fields[4] as List).cast<ClienteFirma>(),
       revisionPtoInspeccion: (fields[5] as List).cast<RevisionPtoInspeccion>(),
       revisionTarea: (fields[6] as List).cast<RevisionTarea>(),
       revisionObservacion: (fields[7] as List).cast<Observacion>(),

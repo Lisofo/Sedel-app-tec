@@ -1,16 +1,21 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print, unused_local_variable
 
 import 'dart:typed_data';
 
-import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
-import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
-import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
-import 'package:app_tecnicos_sedel_wifiless/widgets/custom_button.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:app_tecnicos_sedel_wifiless/models/clientes_firmas.dart';
 import 'package:provider/provider.dart';
 import 'package:signature/signature.dart';
 import 'package:crypto/crypto.dart';
+
+import '../../config/router/router.dart';
+import '../../models/clientes_firmas.dart';
+import '../../models/orden.dart';
+import '../../models/revision.dart';
+import '../../offline/boxes.dart';
+import '../../providers/orden_provider.dart';
+import '../../services/revision_services.dart';
+import '../../widgets/custom_button.dart';
 
 class Firma extends StatefulWidget {
   const Firma({super.key});
@@ -35,7 +40,7 @@ class _FirmaState extends State<Firma> {
   SignatureController controller = SignatureController(
     penStrokeWidth: 3,
     penColor: Colors.black,
-    exportBackgroundColor: Colors.deepOrange,
+    exportBackgroundColor: Colors.transparent,
   );
 
   void _agregarCliente() {
@@ -61,35 +66,46 @@ class _FirmaState extends State<Firma> {
     }
   }
 
-  Future<void> _borrarCliente(int index) async {
+  Future<void> _borrarCliente(int i) async {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Confirmar"),
-            content: const Text("¿Estas seguro de querer borrar la firma?"),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("CANCELAR"),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          surfaceTintColor: Colors.white,
+          title: const Text("Confirmar"),
+          content: const Text("¿Estas seguro de querer borrar la firma?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("CANCELAR"),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
               ),
-              TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.red,
-                  ),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    await RevisionServices().deleteRevisionFirma(
-                        context, orden, client[index], token);
-
-                    setState(() {
-                      client.removeAt(index);
-                    });
-                  },
-                  child: const Text("BORRAR")),
-            ],
-          );
-        });
+              onPressed: () async {
+                bool isConnected = await _checkConnectivity();
+                if(isConnected){
+                  await RevisionServices().deleteRevisionFirmaOffline( orden, client[i]);
+                  await RevisionServices().deleteRevisionFirma(context, orden, client[i], token);
+                }else{
+                  await RevisionServices().deleteRevisionFirmaOffline( orden, client[i]);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('La firma de ${client[i].nombre} ha sido borrada'),
+                    )
+                  );  
+                  router.pop(context); 
+                }
+                client.removeAt(i);
+                setState(() {});
+              },
+              child: const Text("BORRAR")
+            ),
+          ],
+        );
+      }
+    );
   }
 
   void _editarCliente(ClienteFirma firma) async {
@@ -100,6 +116,7 @@ class _FirmaState extends State<Firma> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          surfaceTintColor: Colors.white,
           title: const Text('Editar Cliente'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -172,11 +189,12 @@ class _FirmaState extends State<Firma> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 52, 120, 62),
+          backgroundColor: colors.primary,
           title: Text(
             '${orden.ordenTrabajoId} - Firma',
             style: const TextStyle(color: Colors.white),
@@ -200,7 +218,7 @@ class _FirmaState extends State<Firma> {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color.fromARGB(255, 52, 120, 62),
+                                      color: colors.primary,
                                       width: 2),
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
@@ -220,7 +238,7 @@ class _FirmaState extends State<Firma> {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: const Color.fromARGB(255, 52, 120, 62),
+                                      color: colors.primary,
                                       width: 2),
                                   borderRadius: BorderRadius.circular(5)),
                               child: TextFormField(
@@ -245,7 +263,7 @@ class _FirmaState extends State<Firma> {
                     child: Container(
                       decoration: BoxDecoration(
                           border: Border.all(
-                              color: const Color.fromARGB(255, 52, 120, 62),
+                              color: colors.primary,
                               width: 2),
                           borderRadius: BorderRadius.circular(5)),
                       child: Signature(
@@ -264,7 +282,7 @@ class _FirmaState extends State<Firma> {
                         child: CustomButton(
                           onPressed: () async {
                             if (nameController.text.isNotEmpty && areaController.text.isNotEmpty) {
-                              await guardarFirma(context);
+                              await guardarFirma(context, null);
                             } else {
                               completeDatosPopUp(context);
                             }
@@ -288,14 +306,14 @@ class _FirmaState extends State<Firma> {
                                         borderRadius: BorderRadius.horizontal(
                                             left: Radius.circular(50),
                                             right: Radius.circular(50))))),
-                            child: const Icon(
+                            child: Icon(
                               Icons.delete,
-                              color: Color.fromARGB(255, 52, 120, 62),
+                              color: colors.primary,
                             )),
                       )
                     ],
                   ),
-                  if (exportedImage != null) Image.memory(exportedImage!),
+                  // if (exportedImage != null) Image.memory(exportedImage!),
                   SizedBox(
                     height: 200,
                     child: ListView.builder(
@@ -318,7 +336,7 @@ class _FirmaState extends State<Firma> {
                             });
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
-                                  Text('La firma de $item ha sido borrada'),
+                                Text('La firma de $item ha sido borrada'),
                             ));
                           },
                           background: Container(
@@ -382,6 +400,7 @@ class _FirmaState extends State<Firma> {
 
   AlertDialog borrarDesdeDismiss(BuildContext context, int index) {
     return AlertDialog(
+      surfaceTintColor: Colors.white,
       title: const Text("Confirmar"),
       content: const Text("¿Estas seguro de querer borrar la firma?"),
       actions: <Widget>[
@@ -390,22 +409,27 @@ class _FirmaState extends State<Firma> {
           child: const Text("CANCELAR"),
         ),
         TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-            onPressed: () async {
-              Navigator.of(context).pop(true);
-              await RevisionServices().deleteRevisionFirma(context, orden, client[index], token);
-            },
-            child: const Text("BORRAR")),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.red,
+          ),
+          onPressed: () async {
+            Navigator.of(context).pop(true);
+            await RevisionServices().deleteRevisionFirma(context, orden, client[index], token);
+          },
+          child: const Text("BORRAR")
+          ),
       ],
     );
   }
 
-  Future<void> guardarFirma(BuildContext context) async {
-    exportedImage = await controller.toPngBytes();
+  Future<void> guardarFirma(BuildContext context, Uint8List? firma) async {
+    exportedImage = firma ?? await controller.toPngBytes();
     firmaBytes = exportedImage as List<int>;
     md5Hash = calculateMD5(firmaBytes);
+    int? statusCode;
+    bool isConnected = await _checkConnectivity();
+    RevisionServices revisionServices = RevisionServices();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
 
     final ClienteFirma nuevaFirma = ClienteFirma(
       otFirmaId: 0,
@@ -419,12 +443,30 @@ class _FirmaState extends State<Firma> {
       firma: exportedImage
     );
 
-    await RevisionServices().postRevisonFirma(context, orden, nuevaFirma, token);
-    var statusCode = await RevisionServices().getStatusCodeFirma();
-    
-    if(statusCode == 201){
-      _agregarCliente();
+    if (isConnected) {
+      revisionSeleccionada.revisionFirma.add(nuevaFirma);
+      await revisionServices.postRevisonFirma(context, orden, nuevaFirma, token);
+      statusCode = await revisionServices.getStatusCodeFirma();
+
+      if(statusCode == 201){
+        _agregarCliente();
+      }else{
+        print('error');
+      }  
+    } else {
+      revisionSeleccionada.revisionFirma.add(nuevaFirma);
     }
+  }
+
+  Future<void> posteoDeBox(BuildContext context) async {
+    bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    for(int i = 0; i < revisionSeleccionada.revisionFirma.length; i++){
+      if(revisionSeleccionada.revisionFirma[i].otFirmaId == 0) {
+        await RevisionServices().postRevisonFirma(context, orden, revisionSeleccionada.revisionFirma[i], token);
+      }
+    }
+    RevisionServices.showDialogs(context, 'Firma guardada', false, false);
   }
 
   void completeDatosPopUp(BuildContext context) {
@@ -432,6 +474,7 @@ class _FirmaState extends State<Firma> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          surfaceTintColor: Colors.white,
           title: const Text('Campos vacíos'),
           content: const Text(
             'Por favor, completa todos los campos antes de guardar.',
@@ -452,5 +495,10 @@ class _FirmaState extends State<Firma> {
   String calculateMD5(List<int> bytes) {
     var md5c = md5.convert(bytes);
     return md5c.toString();
+  }
+  
+  Future<bool> _checkConnectivity() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
   }
 }

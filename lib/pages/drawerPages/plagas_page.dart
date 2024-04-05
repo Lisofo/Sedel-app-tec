@@ -1,8 +1,9 @@
-// ignore_for_file: use_build_context_synchronously, void_checks
+// ignore_for_file: use_build_context_synchronously, void_checks, unused_local_variable
 
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/grado_infestacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
@@ -56,6 +57,7 @@ class _PlagasPageState extends State<PlagasPage> {
   // bool isReadOnly = true;
   late int marcaId = 0;
   late Revision revision = Revision.empty();
+  late Pendiente pendiente = Pendiente.empty();
 
   @override
   void initState() {
@@ -75,6 +77,7 @@ class _PlagasPageState extends State<PlagasPage> {
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    pendiente = pendientesBox.values.where((pendiente) => pendiente.ordenId == orden.ordenTrabajoId).toList()[0];
     // if (orden.estado == "EN PROCESO" && marcaId != 0) {
     //   isReadOnly = false;
     // }
@@ -368,7 +371,8 @@ class _PlagasPageState extends State<PlagasPage> {
       plaga: selectedPlaga.descripcion,
       gradoInfestacionId: selectedGrado.gradoInfestacionId,
       codGradoInfestacion: selectedGrado.codGradoInfestacion,
-      gradoInfestacion: selectedGrado.descripcion
+      gradoInfestacion: selectedGrado.descripcion,
+      hiveKey: 0,
     );
 
     if(isConnected){ 
@@ -378,6 +382,7 @@ class _PlagasPageState extends State<PlagasPage> {
       RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
+      
     }
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
