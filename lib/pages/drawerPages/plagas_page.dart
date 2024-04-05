@@ -371,7 +371,7 @@ class _PlagasPageState extends State<PlagasPage> {
       gradoInfestacion: selectedGrado.descripcion
     );
 
-    if(isConnected){
+    if(isConnected){ 
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
       revisionPlagasList.add(nuevaPlaga);

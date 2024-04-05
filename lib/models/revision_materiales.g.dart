@@ -28,13 +28,14 @@ class RevisionMaterialAdapter extends TypeAdapter<RevisionMaterial> {
       material: fields[8] as Materiales,
       lote: fields[9] as Lote,
       metodoAplicacion: fields[10] as MetodoAplicacion,
+      hiveKey: fields[11] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, RevisionMaterial obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.otMaterialId)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class RevisionMaterialAdapter extends TypeAdapter<RevisionMaterial> {
       ..writeByte(9)
       ..write(obj.lote)
       ..writeByte(10)
-      ..write(obj.metodoAplicacion);
+      ..write(obj.metodoAplicacion)
+      ..writeByte(11)
+      ..write(obj.hiveKey);
   }
 
   @override

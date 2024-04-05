@@ -21,6 +21,8 @@ class RevisionTarea extends HiveObject{
   late String descripcion;
   @HiveField(6)
   late String comentario;
+  @HiveField(7)
+  late int hiveKey;
 
   RevisionTarea({
     required this.otTareaId,
@@ -30,6 +32,7 @@ class RevisionTarea extends HiveObject{
     required this.codTarea,
     required this.descripcion,
     required this.comentario,
+    required this.hiveKey,
   });
 
   factory RevisionTarea.fromJson(Map<String, dynamic> json) => RevisionTarea(
@@ -40,6 +43,7 @@ class RevisionTarea extends HiveObject{
         codTarea: json["codTarea"] as String? ?? '',
         descripcion: json["descripcion"] as String? ?? '',
         comentario: json["comentario"] as String? ?? '',
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -60,6 +64,7 @@ class RevisionTarea extends HiveObject{
     codTarea = '';
     descripcion = '';
     comentario = '';
+    hiveKey = 0;
   }
 
   @override

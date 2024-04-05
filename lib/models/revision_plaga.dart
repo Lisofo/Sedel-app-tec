@@ -27,6 +27,8 @@ class RevisionPlaga extends HiveObject{
   late String codGradoInfestacion;
   @HiveField(9)
   late String gradoInfestacion;
+  @HiveField(10)
+  late int hiveKey;
 
   RevisionPlaga({
     required this.otPlagaId,
@@ -39,6 +41,7 @@ class RevisionPlaga extends HiveObject{
     required this.gradoInfestacionId,
     required this.codGradoInfestacion,
     required this.gradoInfestacion,
+    required this.hiveKey,
   });
 
   factory RevisionPlaga.fromJson(Map<String, dynamic> json) => RevisionPlaga(
@@ -52,6 +55,7 @@ class RevisionPlaga extends HiveObject{
         gradoInfestacionId: json["gradoInfestacionId"] as int? ?? 0,
         codGradoInfestacion: json["codGradoInfestacion"] as String? ?? '',
         gradoInfestacion: json["gradoInfestacion"] as String? ?? '',
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -78,6 +82,7 @@ class RevisionPlaga extends HiveObject{
     gradoInfestacionId = 0;
     codGradoInfestacion = '';
     gradoInfestacion = '';
+    hiveKey = 0;
   }
 
   @override

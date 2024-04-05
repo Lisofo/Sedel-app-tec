@@ -34,6 +34,8 @@ class RevisionMaterial extends HiveObject {
   late Lote lote;
   @HiveField(10)
   late MetodoAplicacion metodoAplicacion;
+  @HiveField(11)
+  late int hiveKey;
 
   RevisionMaterial({
     required this.otMaterialId,
@@ -47,6 +49,7 @@ class RevisionMaterial extends HiveObject {
     required this.material,
     required this.lote,
     required this.metodoAplicacion,
+    required this.hiveKey,
   });
 
   factory RevisionMaterial.fromJson(Map<String, dynamic> json) =>
@@ -62,6 +65,7 @@ class RevisionMaterial extends HiveObject {
         material: Materiales.fromJson(json["material"]),
         lote: Lote.fromJson(json["lote"]),
         metodoAplicacion: MetodoAplicacion.fromJson(json["metodoAplicacion"]),
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -90,6 +94,7 @@ class RevisionMaterial extends HiveObject {
     material = Materiales.empty();
     lote = Lote.empty();
     metodoAplicacion = MetodoAplicacion.empty();
+    hiveKey = 0;
   }
 
   @override
