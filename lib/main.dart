@@ -44,9 +44,6 @@ Future<void> main() async {
   // int ordenKey = await addOrdenesToBox(nuevaOrden);
   // print(ordenKey);
 
-    
-
-  
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
