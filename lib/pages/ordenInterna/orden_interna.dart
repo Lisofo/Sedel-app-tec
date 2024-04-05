@@ -19,6 +19,8 @@ import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
 import 'package:app_tecnicos_sedel_wifiless/widgets/icons.dart';
 import 'package:intl/intl.dart';
 
+import '../../offline/boxes.dart';
+
 class OrdenInterna extends StatefulWidget {
   const OrdenInterna({super.key});
 
@@ -310,13 +312,20 @@ class _OrdenInternaState extends State<OrdenInterna> {
                 disabled: !(marcaId != 0 && orden.estado == 'EN PROCESO'),
               ),
               IconButton(
-                  onPressed: marcaId != 0 && orden.estado == 'EN PROCESO'
-                      ? () => volverAPendiente(orden)
-                      : null,
-                  icon: Icon(Icons.backspace,
-                      color: marcaId != 0 && orden.estado == 'EN PROCESO'
-                          ? const Color.fromARGB(255, 52, 120, 62)
-                          : Colors.grey)),
+                onPressed: marcaId != 0 && orden.estado == 'EN PROCESO'
+                    ? () => volverAPendiente(orden)
+                    : null,
+                icon: Icon(Icons.backspace,
+                    color: marcaId != 0 && orden.estado == 'EN PROCESO'
+                        ? const Color.fromARGB(255, 52, 120, 62)
+                        : Colors.grey)),
+              IconButton(
+                tooltip: 'Sincronizar',
+                onPressed: () async {
+                  sincronizar();
+                }, 
+                icon: const Icon(Icons.sync, color: Color.fromARGB(255, 52, 120, 62),)
+              )
             ],
           ),
         ),
@@ -444,5 +453,26 @@ class _OrdenInternaState extends State<OrdenInterna> {
             ],
           );
         });
+  }
+
+  Future<void> sincronizar() async {
+    for(var i = 0; i < pendientesBox.length; i++){
+      Pendiente pendienteSeleccionada = pendientesBox.getAt(i);
+      switch (pendienteSeleccionada.tipo){
+        case 7:
+          switch (pendienteSeleccionada.accion){
+            case 1:
+              await RevisionServices().postRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
+            break;
+            case 3:
+              await RevisionServices().deleteRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
+            break;
+          }
+        break;
+      }
+    }
+    await pendientesBox.clear();
+    print(pendientesBox.length);
+    print('termino de sincronizar');
   }
 }

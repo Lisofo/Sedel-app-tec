@@ -57,7 +57,7 @@ class _PlagasPageState extends State<PlagasPage> {
   // bool isReadOnly = true;
   late int marcaId = 0;
   late Revision revision = Revision.empty();
-  late Pendiente pendiente = Pendiente.empty();
+  
 
   @override
   void initState() {
@@ -77,7 +77,6 @@ class _PlagasPageState extends State<PlagasPage> {
     orden = context.read<OrdenProvider>().orden;
     marcaId = context.read<OrdenProvider>().marcaId;
     revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-    pendiente = pendientesBox.values.where((pendiente) => pendiente.ordenId == orden.ordenTrabajoId).toList()[0];
     // if (orden.estado == "EN PROCESO" && marcaId != 0) {
     //   isReadOnly = false;
     // }
@@ -181,8 +180,7 @@ class _PlagasPageState extends State<PlagasPage> {
                         }
                         bool agregarPlaga = true;
                         if (revisionPlagasList.isNotEmpty) {
-                          agregarPlaga = !revisionPlagasList.any((plaga) =>
-                              plaga.plagaId == selectedPlaga.plagaId);
+                          agregarPlaga = !revisionPlagasList.any((plaga) => plaga.plagaId == selectedPlaga.plagaId);
                         }
                         if (agregarPlaga && selectedGrado.gradoInfestacionId != 0) {
                           await posteoRevisionPlaga(context);
@@ -346,6 +344,20 @@ class _PlagasPageState extends State<PlagasPage> {
       await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[i], orden);
       await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[i], token);
     }else{
+      if(revisionPlagasList[i].otPlagaId == 0){
+       pendientesBox.delete(revisionPlagasList[i].hiveKey);
+      } else {
+        Pendiente pendienteABorrar = Pendiente.empty();
+        pendienteABorrar.accion = 3;
+        pendienteABorrar.objeto = revisionPlagasList[i];
+        pendienteABorrar.ordenId = orden.ordenTrabajoId;
+        pendienteABorrar.otRevisionId = orden.otRevisionId;
+        pendienteABorrar.tipo = 7;
+        int hiveKeySelected = await addToBoxPendientes(pendienteABorrar);
+        Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+        objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+      
+      }
       await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[i], orden);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -354,13 +366,14 @@ class _PlagasPageState extends State<PlagasPage> {
       );  
       router.pop(context);
     }
-    revisionPlagasList.removeAt(i);
+    
     setState(() {});
   }
 
   Future<void> posteoRevisionPlaga(BuildContext context) async {
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    late Pendiente pendiente = Pendiente.empty();
     var nuevaPlaga = RevisionPlaga(
       otPlagaId: 0,
       ordenTrabajoId: orden.ordenTrabajoId,
@@ -374,6 +387,12 @@ class _PlagasPageState extends State<PlagasPage> {
       gradoInfestacion: selectedGrado.descripcion,
       hiveKey: 0,
     );
+    pendiente.objeto = nuevaPlaga;
+    pendiente.accion = 1;
+    pendiente.ordenId = orden.ordenTrabajoId;
+    pendiente.otRevisionId = orden.otRevisionId;
+    pendiente.tipo = 7;
+
 
     if(isConnected){ 
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
@@ -382,7 +401,9 @@ class _PlagasPageState extends State<PlagasPage> {
       RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
-      
+      int hiveKeySelected = await addToBoxPendientes(pendiente);
+      Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+      objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
     }
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
@@ -394,7 +415,7 @@ class _PlagasPageState extends State<PlagasPage> {
   Future<void> posteoDeBox(BuildContext context) async {
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-
+    
     for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
       RevisionPlaga plaga = revisionSeleccionada.revisionPlaga[i];
       if(plaga.otPlagaId == 0){
@@ -403,4 +424,6 @@ class _PlagasPageState extends State<PlagasPage> {
     }
     RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
   }
+
+  
 }

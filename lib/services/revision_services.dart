@@ -337,7 +337,7 @@ class RevisionServices {
           content: Text('La plaga ${revisionPlaga.plaga} ha sido borrada'),
         )
     );
-        router.pop(context);
+        
       }
     } catch (e) {
       if (e is DioException) {

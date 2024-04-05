@@ -21,13 +21,14 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
       otRevisionId: fields[1] as int?,
       objeto: fields[2] as dynamic,
       accion: fields[3] as int,
+      tipo: fields[4] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Pendiente obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.ordenId)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class PendienteAdapter extends TypeAdapter<Pendiente> {
       ..writeByte(2)
       ..write(obj.objeto)
       ..writeByte(3)
-      ..write(obj.accion);
+      ..write(obj.accion)
+      ..writeByte(4)
+      ..write(obj.tipo);
   }
 
   @override

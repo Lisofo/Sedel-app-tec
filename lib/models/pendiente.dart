@@ -15,12 +15,15 @@ class Pendiente extends HiveObject {
   late dynamic objeto;
   @HiveField(3)
   late int accion;
+  @HiveField(4)
+  late int tipo;
 
   Pendiente ({
     required this.ordenId,
     required this.otRevisionId,
     required this.objeto,
     required this.accion,
+    required this.tipo,
   });
 
   Pendiente.empty(){
@@ -28,6 +31,7 @@ class Pendiente extends HiveObject {
     otRevisionId = 0;
     objeto = null;
     accion = 0;
+    tipo = 0;
   }
 
 }

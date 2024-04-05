@@ -194,7 +194,13 @@ class _MaterialesPageState extends State<MaterialesPage> {
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  await posteoRevisionMateriales(material, context);
+                  bool agregarMaterial = true;
+                  if (revisionMaterialesList.isNotEmpty) {
+                    agregarMaterial = !revisionMaterialesList.any((material) => material.material.materialId == selectedMaterial.materialId);
+                  }
+                  if(agregarMaterial){
+                    await posteoRevisionMateriales(material, context);
+                  }
                   router.pop();
                 },
               ),

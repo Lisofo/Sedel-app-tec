@@ -11,8 +11,8 @@ import 'boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 
-Future<void> addOrdenesToBox(Orden orden) async {
-  await boxOrdenes.add(orden);
+Future addOrdenesToBox(Orden orden) async {
+  return await boxOrdenes.add(orden);
 }
 
 Future<void> addListasToBoxCodiguera(
@@ -45,6 +45,6 @@ Future<void> addToBoxRevisiones(Revision? revision) async{
   revisiones.put('${revision?.otOrdenId}', revision);
 }
 
-Future<void> addToBoxPendientes(Pendiente pendiente) async {
-  await pendientesBox.put('${pendiente.ordenId}',pendiente);
+Future addToBoxPendientes(Pendiente pendiente) async {
+  return await pendientesBox.add(pendiente);
 } 
