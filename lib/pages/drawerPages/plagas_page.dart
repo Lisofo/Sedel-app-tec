@@ -304,7 +304,7 @@ class _PlagasPageState extends State<PlagasPage> {
                                             TextButton(
                                               style: TextButton.styleFrom(foregroundColor:Colors.red,),
                                               onPressed: () async {
-                                                await borrarPlaga(context, index);
+                                                await borrarPlaga(context, revisionPlagasList[index]);
                                               },
                                               child: const Text("BORRAR")
                                             ),
@@ -338,18 +338,19 @@ class _PlagasPageState extends State<PlagasPage> {
     );
   }
 
-  Future<void> borrarPlaga(BuildContext context, int i) async {
+  Future<void> borrarPlaga(BuildContext context,RevisionPlaga plaga) async {
     bool isConnected = await _checkConnectivity();
     if(isConnected){
-      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[i], orden);
-      await RevisionServices().deleteRevisionPlaga(context, orden, revisionPlagasList[i], token);
+      RevisionPlaga plagaABorrar = revision.revisionPlaga.firstWhere((element) => element.otPlagaId == plaga.otPlagaId);
+      await RevisionServices().deleteRevisionPlagaOffline(plagaABorrar, orden);
+      await RevisionServices().deleteRevisionPlaga(context, orden, plaga, token);
     }else{
-      if(revisionPlagasList[i].otPlagaId == 0){
-       pendientesBox.delete(revisionPlagasList[i].hiveKey);
+      if(plaga.otPlagaId == 0){
+       pendientesBox.delete(plaga.hiveKey);
       } else {
         Pendiente pendienteABorrar = Pendiente.empty();
         pendienteABorrar.accion = 3;
-        pendienteABorrar.objeto = revisionPlagasList[i];
+        pendienteABorrar.objeto = plaga;
         pendienteABorrar.ordenId = orden.ordenTrabajoId;
         pendienteABorrar.otRevisionId = orden.otRevisionId;
         pendienteABorrar.tipo = 7;
@@ -358,15 +359,15 @@ class _PlagasPageState extends State<PlagasPage> {
         objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
       
       }
-      await RevisionServices().deleteRevisionPlagaOffline(revisionPlagasList[i], orden);
+      await RevisionServices().deleteRevisionPlagaOffline(plaga, orden);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('La plaga ${revisionPlagasList[i].plaga} ha sido borrada'),
+          content: Text('La plaga ${plaga.plaga} ha sido borrada'),
         )
       );  
-      router.pop(context);
+      
     }
-    
+    router.pop(context);
     setState(() {});
   }
 
@@ -397,7 +398,7 @@ class _PlagasPageState extends State<PlagasPage> {
     if(isConnected){ 
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
-      revisionPlagasList.add(nuevaPlaga);
+      //revisionPlagasList.add(nuevaPlaga);
       RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
     }else{
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
