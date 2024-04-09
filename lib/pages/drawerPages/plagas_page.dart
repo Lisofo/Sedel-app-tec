@@ -109,231 +109,215 @@ class _PlagasPageState extends State<PlagasPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 52, 120, 62),
-        title: Text(
-          '${orden.ordenTrabajoId} - Plagas',
-          style: const TextStyle(color: Colors.white),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 52, 120, 62),
+          title: Text(
+            '${orden.ordenTrabajoId} - Plagas',
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: const Color.fromARGB(255, 52, 120, 62)
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: const Color.fromARGB(255, 52, 120, 62)
+                      ),
+                      borderRadius: BorderRadius.circular(5)
                     ),
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  child: DropdownSearch(
-                    items: plagas,
-                    popupProps: const PopupProps.menu(
-                      showSearchBox: true, searchDelay: Duration.zero),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedPlaga = value;
-                      });
-                    },
-                  )
-                ),
-                const SizedBox(height: 30,),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 2,
-                      color: const Color.fromARGB(255, 52, 120, 62)
-                    ),
-                    borderRadius: BorderRadius.circular(5)
-                  ),
-                  child: DropdownSearch(
-                    items: gradoInfeccion,
-                    popupProps: const PopupProps.menu(
-                      showSearchBox: true, 
-                      searchDelay: Duration.zero
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedGrado = value;
-                      });
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CustomButton(
-                      onPressed: () async {
-                        if(marcaId == 0){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Marque entrada antes de ingresar datos.'),
-                          ));
-                          return Future.value(false);
-                        }
-                        bool agregarPlaga = true;
-                        if (revisionPlagasList.isNotEmpty) {
-                          agregarPlaga = !revisionPlagasList.any((plaga) => plaga.plagaId == selectedPlaga.plagaId);
-                        }
-                        if (agregarPlaga && selectedGrado.gradoInfestacionId != 0) {
-                          await posteoRevisionPlaga(context);
-                          setState(() {});
-                        }
+                    child: DropdownSearch(
+                      items: plagas,
+                      popupProps: const PopupProps.menu(
+                        showSearchBox: true, searchDelay: Duration.zero),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedPlaga = value;
+                        });
                       },
-                      text: 'Agregar +',
-                      tamano: 20,
+                    )
+                  ),
+                  const SizedBox(height: 30,),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 2,
+                        color: const Color.fromARGB(255, 52, 120, 62)
+                      ),
+                      borderRadius: BorderRadius.circular(5)
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CustomButton(
-                      onPressed: () async {
-                        if(marcaId == 0){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Marque entrada antes de ingresar datos.'),
-                          ));
-                          return Future.value(false);
-                        }
-                        await posteoDeBox(context);
+                    child: DropdownSearch(
+                      items: gradoInfeccion,
+                      popupProps: const PopupProps.menu(
+                        showSearchBox: true, 
+                        searchDelay: Duration.zero
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedGrado = value;
+                        });
                       },
-                      text: 'Sincronizar',
-                      tamano: 20,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: Container(
-                    constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.6),
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: revisionPlagasList.length,
-                      itemBuilder: (context, index) {
-                        final item = revisionPlagasList[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Dismissible(
-                            key: Key(item.toString()),
-                            direction: DismissDirection.endToStart,
-                            confirmDismiss: (DismissDirection direction) {
-                              if(marcaId == 0){
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  content: Text('Marque entrada antes de ingresar datos.'),
-                                ));
-                                return Future.value(false);
-                              }
-                              return showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Confirmar"),
-                                      content: const Text(
-                                          "¿Estas seguro de querer borrar la plaga?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () => Navigator.of(context).pop(false),
-                                          child: const Text("CANCELAR"),
-                                        ),
-                                        TextButton(
-                                            style: TextButton.styleFrom(
-                                              foregroundColor: Colors.red,
-                                            ),
-                                            onPressed: () async {
-                                              Navigator.of(context).pop(true);
-                                              await RevisionServices().deleteRevisionPlaga(context,orden,revisionPlagasList[index],token);
-                                            },
-                                            child: const Text("BORRAR")),
-                                      ],
-                                    );
-                                  });
-                            },
-                            onDismissed: (direction) async {
-                              setState(() {
-                                revisionPlagasList.removeAt(index);
-                              });
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('La plaga $item ha sido borrada'),
-                              ));
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              alignment: AlignmentDirectional.centerEnd,
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
-                            ),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                  border: Border(bottom: BorderSide())),
-                              child: ListTile(
-                                title: Text(revisionPlagasList[index].plaga),
-                                subtitle: Text(revisionPlagasList[index].gradoInfestacion),
-                                trailing: IconButton(
-                                  onPressed: () async {
-                                    if(marcaId == 0){
-                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                        content: Text('Marque entrada antes de ingresar datos.'),
-                                      ));
-                                      return Future.value(false);
-                                    }
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Confirmar"),
-                                          content: Text("¿Estas seguro de querer borrar la plaga ${revisionPlagasList[index].plaga}?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () => Navigator.of(context).pop(false),
-                                              child: const Text("CANCELAR"),
-                                            ),
-                                            TextButton(
-                                              style: TextButton.styleFrom(foregroundColor:Colors.red,),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      CustomButton(
+                        onPressed: () async {
+                          if(marcaId == 0){
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Marque entrada antes de ingresar datos.'),
+                            ));
+                            return Future.value(false);
+                          }
+                          bool agregarPlaga = true;
+                          if (revisionPlagasList.isNotEmpty) {
+                            agregarPlaga = !revisionPlagasList.any((plaga) => plaga.plagaId == selectedPlaga.plagaId);
+                          }
+                          if (agregarPlaga && selectedGrado.gradoInfestacionId != 0) {
+                            await posteoRevisionPlaga(context);
+                            setState(() {});
+                          }
+                        },
+                        text: 'Agregar +',
+                        tamano: 20,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: Container(
+                      constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.6),
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: revisionPlagasList.length,
+                        itemBuilder: (context, index) {
+                          final item = revisionPlagasList[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Dismissible(
+                              key: Key(item.toString()),
+                              direction: DismissDirection.endToStart,
+                              confirmDismiss: (DismissDirection direction) {
+                                if(marcaId == 0){
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text('Marque entrada antes de ingresar datos.'),
+                                  ));
+                                  return Future.value(false);
+                                }
+                                return showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Confirmar"),
+                                        content: const Text(
+                                            "¿Estas seguro de querer borrar la plaga?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(false),
+                                            child: const Text("CANCELAR"),
+                                          ),
+                                          TextButton(
+                                              style: TextButton.styleFrom(
+                                                foregroundColor: Colors.red,
+                                              ),
                                               onPressed: () async {
-                                                await borrarPlaga(context, revisionPlagasList[index]);
+                                                Navigator.of(context).pop(true);
+                                                await RevisionServices().deleteRevisionPlaga(context,orden,revisionPlagasList[index],token);
                                               },
-                                              child: const Text("BORRAR")
-                                            ),
-                                          ],
-                                        );
+                                              child: const Text("BORRAR")),
+                                        ],
+                                      );
+                                    });
+                              },
+                              onDismissed: (direction) async {
+                                setState(() {
+                                  revisionPlagasList.removeAt(index);
+                                });
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('La plaga $item ha sido borrada'),
+                                ));
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                alignment: AlignmentDirectional.centerEnd,
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    border: Border(bottom: BorderSide())),
+                                child: ListTile(
+                                  title: Text(revisionPlagasList[index].plaga),
+                                  subtitle: Text(revisionPlagasList[index].gradoInfestacion),
+                                  trailing: IconButton(
+                                    onPressed: () async {
+                                      if(marcaId == 0){
+                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                          content: Text('Marque entrada antes de ingresar datos.'),
+                                        ));
+                                        return Future.value(false);
                                       }
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete)
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Confirmar"),
+                                            content: Text("¿Estas seguro de querer borrar la plaga ${revisionPlagasList[index].plaga}?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(false),
+                                                child: const Text("CANCELAR"),
+                                              ),
+                                              TextButton(
+                                                style: TextButton.styleFrom(foregroundColor:Colors.red,),
+                                                onPressed: () async {
+                                                  await borrarPlaga(context, revisionPlagasList[index]);
+                                                },
+                                                child: const Text("BORRAR")
+                                              ),
+                                            ],
+                                          );
+                                        }
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete)
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // if (isReadOnly)
-          //   IgnorePointer(
-          //     ignoring: false,
-          //     child: Container(
-          //       color: Colors.grey.withOpacity(0.6),
-          //     ),
-          //   ),
-        ],
+            // if (isReadOnly)
+            //   IgnorePointer(
+            //     ignoring: false,
+            //     child: Container(
+            //       color: Colors.grey.withOpacity(0.6),
+            //     ),
+            //   ),
+          ],
+        ),
       ),
     );
   }
@@ -357,7 +341,6 @@ class _PlagasPageState extends State<PlagasPage> {
         int hiveKeySelected = await addToBoxPendientes(pendienteABorrar);
         Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
         objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
-      
       }
       await RevisionServices().deleteRevisionPlagaOffline(plaga, orden);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -394,7 +377,6 @@ class _PlagasPageState extends State<PlagasPage> {
     pendiente.otRevisionId = orden.otRevisionId;
     pendiente.tipo = 7;
 
-
     if(isConnected){ 
       revisionSeleccionada.revisionPlaga.add(nuevaPlaga);
       await RevisionServices().postRevisionPlaga(context, orden, nuevaPlaga, token);
@@ -413,18 +395,17 @@ class _PlagasPageState extends State<PlagasPage> {
     );
   }
 
-  Future<void> posteoDeBox(BuildContext context) async {
-    bool isConnected = await _checkConnectivity();
-    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-    
-    for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
-      RevisionPlaga plaga = revisionSeleccionada.revisionPlaga[i];
-      if(plaga.otPlagaId == 0){
-        await RevisionServices().postRevisionPlaga(context, orden, plaga, token);
-      }
-    }
-    RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
-  }
+  // Future<void> posteoDeBox(BuildContext context) async {
+  //   bool isConnected = await _checkConnectivity();
+  //   Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+  //   for(int i = 0; i < revisionSeleccionada.revisionPlaga.length; i++){
+  //     RevisionPlaga plaga = revisionSeleccionada.revisionPlaga[i];
+  //     if(plaga.otPlagaId == 0){
+  //       await RevisionServices().postRevisionPlaga(context, orden, plaga, token);
+  //     }
+  //   }
+  //   RevisionServices.showDialogs(context, 'Plaga guardada', false, false);
+  // }
 
   
 }

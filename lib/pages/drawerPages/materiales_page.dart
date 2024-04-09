@@ -3,6 +3,7 @@
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/material.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_materiales.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
@@ -10,7 +11,6 @@ import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';
 import 'package:app_tecnicos_sedel_wifiless/providers/orden_provider.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/materiales_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/plagas_services.dart';
-import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,6 @@ import 'package:provider/provider.dart';
 import '../../models/lote.dart';
 import '../../models/metodo_aplicacion.dart';
 import '../../models/revision.dart';
-import '../../widgets/custom_button.dart';
 
 class MaterialesPage extends StatefulWidget {
   const MaterialesPage({super.key});
@@ -262,27 +261,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                   isExpanded: true,
                 ),
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CustomButton(
-                      onPressed: () async {
-                        if(marcaId == 0){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Marque entrada antes de ingresar datos.'),
-                          ));
-                          return Future.value(false);
-                        }
-                        await posteoDeBox(context);
-                      },
-                      text: 'Sincronizar',
-                      tamano: 20,
-                    ),
-                  ],
-                ),
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20,),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,7 +318,7 @@ class _MaterialesPageState extends State<MaterialesPage> {
                                           foregroundColor: Colors.red,
                                         ),
                                         onPressed: () async {
-                                          await borrarMaterial(context, i);
+                                          await borrarMaterial(context, revisionMaterialesList[i]);
                                         },
                                         child: const Text("BORRAR")
                                       ),
@@ -441,21 +420,35 @@ class _MaterialesPageState extends State<MaterialesPage> {
   }
 
 
-  Future<void> borrarMaterial(BuildContext context, int i) async{
+  Future<void> borrarMaterial(BuildContext context, RevisionMaterial material) async{
     bool isConnected = await _checkConnectivity();
     if(isConnected){
-      await MaterialesServices().deleteRevisionMaterialOffline(revisionMaterialesList[i], orden);
-      await MaterialesServices().deleteRevisionMaterial(context,orden,revisionMaterialesList[i],token);
+      RevisionMaterial materialABorrar = revision.revisionMaterial.firstWhere((element) => element.otMaterialId == material.otMaterialId);
+      await MaterialesServices().deleteRevisionMaterialOffline(materialABorrar, orden);
+      await MaterialesServices().deleteRevisionMaterial(context,orden,material,token);
     }else{
-      await MaterialesServices().deleteRevisionMaterialOffline(revisionMaterialesList[i], orden);
+      if(material.otMaterialId == 0) {
+        pendientesBox.delete(material.hiveKey);
+      } else {
+        Pendiente pendienteABorrar = Pendiente.empty();
+        pendienteABorrar.accion = 3;
+        pendienteABorrar.objeto = material;
+        pendienteABorrar.ordenId = orden.ordenTrabajoId;
+        pendienteABorrar.otRevisionId = orden.otRevisionId;
+        pendienteABorrar.tipo = 7;
+        int hiveKeySelected = await addToBoxPendientes(pendienteABorrar);
+        Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+        objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+      }
+      await MaterialesServices().deleteRevisionMaterialOffline(material, orden);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('El Material ${revisionMaterialesList[i].material} ha sido borrado'),
+          content: Text('El Material ${material.material} ha sido borrado'),
         )
       );  
       router.pop(context);
     }
-    revisionMaterialesList.removeAt(i);
+    // revisionMaterialesList.removeAt(i);
     setState(() {});
   }
 
@@ -463,56 +456,46 @@ class _MaterialesPageState extends State<MaterialesPage> {
     late List<int> plagasIds = [];
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-
+    late Pendiente pendiente = Pendiente.empty();
     final RevisionMaterial nuevaRevisionMaterial =
-        RevisionMaterial(
-            otMaterialId: 0,
-            ordenTrabajoId: orden.ordenTrabajoId,
-            otRevisionId: orden.otRevisionId,
-            cantidad: esNumerico(cantidad) ? double.parse(cantidad) : double.parse("0.0"),
-            comentario: '',
-            ubicacion: ubicacion,
-            areaCobertura: areaCobertura,
-            plagas: plagasSeleccionadas,
-            material: material,
-            lote: selectedLote!,
-            metodoAplicacion: selectedMetodo!,
-            hiveKey: 0);
-
+      RevisionMaterial(
+        otMaterialId: 0,
+        ordenTrabajoId: orden.ordenTrabajoId,
+        otRevisionId: orden.otRevisionId,
+        cantidad: esNumerico(cantidad) ? double.parse(cantidad) : double.parse("0.0"),
+        comentario: '',
+        ubicacion: ubicacion,
+        areaCobertura: areaCobertura,
+        plagas: plagasSeleccionadas,
+        material: material,
+        lote: selectedLote!,
+        metodoAplicacion: selectedMetodo!,
+        hiveKey: 0
+      );
     for (var i = 0; i < plagasSeleccionadas.length; i++) {
       plagasIds.add(plagasSeleccionadas[i].plagaId);
     }
+    pendiente.objeto = nuevaRevisionMaterial;
+    pendiente.accion = 1;
+    pendiente.ordenId = orden.ordenTrabajoId;
+    pendiente.otRevisionId = orden.otRevisionId;
+    pendiente.tipo = 5;
 
 
     if(isConnected){
       revisionSeleccionada.revisionMaterial.add(nuevaRevisionMaterial);
       await MaterialesServices().postRevisionMaterial(context, orden, plagasIds, nuevaRevisionMaterial, token);
-      revisionMaterialesList.add(nuevaRevisionMaterial);
+      // revisionMaterialesList.add(nuevaRevisionMaterial);
       MaterialesServices.showDialogs(context, 'Material Guardado', false, false);
     }
     else{
       revisionSeleccionada.revisionMaterial.add(nuevaRevisionMaterial);
+      int hiveKeySelected = await addToBoxPendientes(pendiente);
+      Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+      objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
     }
     setState(() {});
   }
-
-  Future<void> posteoDeBox(BuildContext context) async {
-    bool isConnected = await _checkConnectivity();
-    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-    for(int i = 0; i < revisionSeleccionada.revisionMaterial.length; i++){
-      late List<int> plagasIds = [];
-      for (var i = 0; i < plagasSeleccionadas.length; i++) {
-        plagasIds.add(plagasSeleccionadas[i].plagaId);
-      }
-      RevisionMaterial material = revisionSeleccionada.revisionMaterial[i];
-      if(material.otMaterialId == 0){
-        await MaterialesServices().postRevisionMaterial(context, orden, plagasIds, material, token);
-      }
-    }
-    RevisionServices.showDialogs(context, 'Material guardado', false, false);
-  }
-
-  
 
   bool esNumerico(String str) {
     return double.tryParse(str) != null;

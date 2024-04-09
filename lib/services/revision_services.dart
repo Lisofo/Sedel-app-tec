@@ -225,7 +225,7 @@ class RevisionServices {
       );
       if (resp.statusCode == 201) {
         revisionTarea.otTareaId = resp.data["otTareaId"];
-        showDialogs(context, 'Tarea guardada', false, false);
+        // showDialogs(context, 'Tarea guardada', false, false);
       }
 
       return;
@@ -332,12 +332,11 @@ class RevisionServices {
         ),
       );
       if (resp.statusCode == 204) {
-        ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('La plaga ${revisionPlaga.plaga} ha sido borrada'),
-        )
-    );
-        
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text('La plaga ${revisionPlaga.plaga} ha sido borrada'),
+        //   )
+        // );
       }
     } catch (e) {
       if (e is DioException) {

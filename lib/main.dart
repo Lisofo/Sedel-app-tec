@@ -12,7 +12,6 @@ import 'package:app_tecnicos_sedel_wifiless/models/revision_plaga.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_pto_inspeccion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tipos_ptos_inspeccion.dart';
-import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';

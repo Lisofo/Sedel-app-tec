@@ -4,6 +4,7 @@ import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/ubicacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
+import 'package:app_tecnicos_sedel_wifiless/services/materiales_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/orden_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/revision_services.dart';
 import 'package:app_tecnicos_sedel_wifiless/services/ubicacion_services.dart';
@@ -456,23 +457,49 @@ class _OrdenInternaState extends State<OrdenInterna> {
   }
 
   Future<void> sincronizar() async {
-    for(var i = 0; i < pendientesBox.length; i++){
-      Pendiente pendienteSeleccionada = pendientesBox.getAt(i);
-      switch (pendienteSeleccionada.tipo){
-        case 7:
-          switch (pendienteSeleccionada.accion){
-            case 1:
-              await RevisionServices().postRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
-            break;
-            case 3:
-              await RevisionServices().deleteRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
-            break;
-          }
-        break;
+    if(pendientesBox.isNotEmpty){
+      for(var i = 0; i < pendientesBox.length; i++){
+        Pendiente pendienteSeleccionada = pendientesBox.getAt(i);
+        switch (pendienteSeleccionada.tipo){
+          case 5:
+            switch (pendienteSeleccionada.accion){
+              case 1:
+                List<int> plagasIds = [];
+                for(var i = 0; i < pendienteSeleccionada.objeto.plagas; i++){
+                  plagasIds.add(pendienteSeleccionada.objeto.plagas[i].plagaId);
+                }
+                await MaterialesServices().postRevisionMaterial(context, orden, plagasIds, pendienteSeleccionada.objeto, token);
+              break;
+              case 3:
+                await MaterialesServices().deleteRevisionMaterial(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+            }
+          break;
+          case 7:
+            switch (pendienteSeleccionada.accion){
+              case 1:
+                await RevisionServices().postRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+              case 3:
+                await RevisionServices().deleteRevisionPlaga(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+            }
+          break;
+          case 8:
+            switch (pendienteSeleccionada.tipo){
+              case 1:
+                await RevisionServices().postRevisionTarea(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+              case 3:
+                await RevisionServices().deleteRevisionTarea(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+            }
+        }
       }
+      await pendientesBox.clear();
+      print(pendientesBox.length);
+      RevisionServices.showDialogs(context, 'Terminó de sincronizar', false, false);
     }
-    await pendientesBox.clear();
-    print(pendientesBox.length);
-    print('termino de sincronizar');
+    
   }
 }

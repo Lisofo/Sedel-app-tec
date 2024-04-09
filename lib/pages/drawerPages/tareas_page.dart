@@ -2,6 +2,7 @@
 
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
+import 'package:app_tecnicos_sedel_wifiless/models/pendiente.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/revision_tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/tarea.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
@@ -83,62 +84,38 @@ class _TareasPageState extends State<TareasPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 52, 120, 62),
-        title: Text('${orden.ordenTrabajoId} - Tareas Realizadas',
-          style: const TextStyle(color: Colors.white),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 52, 120, 62),
+          title: Text('${orden.ordenTrabajoId} - Tareas Realizadas',
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1, color: const Color.fromARGB(255, 52, 120, 62)),
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: DropdownSearch(
-                  items: tareas,
-                  popupProps: const PopupProps.menu(
-                    showSearchBox: true, searchDelay: Duration.zero),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTarea = value;
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(height: 20,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomButton(
-                    onPressed: () async {
-                      if(marcaId == 0){
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Marque entrada antes de ingresar datos.'),
-                        ));
-                        return Future.value(false);
-                      }
-                      bool agregarTarea = true;
-                      if (revisionTareasList.isNotEmpty) {
-                        agregarTarea = !revisionTareasList.any((tarea) => tarea.tareaId == selectedTarea.tareaId);
-                      }
-                      if (agregarTarea) {
-                        await posteoRevisionTarea(context);
-                        setState(() {});
-                      }
-                    },
-                    text: 'Agregar +',
-                    tamano: 20,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1, color: const Color.fromARGB(255, 52, 120, 62)),
+                    borderRadius: BorderRadius.circular(5)
                   ),
-                ],
-              ),
-              Row(
+                  child: DropdownSearch(
+                    items: tareas,
+                    popupProps: const PopupProps.menu(
+                      showSearchBox: true, searchDelay: Duration.zero),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedTarea = value;
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20,),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     CustomButton(
@@ -149,157 +126,176 @@ class _TareasPageState extends State<TareasPage> {
                           ));
                           return Future.value(false);
                         }
-                        await posteoDeBox(context);
+                        bool agregarTarea = true;
+                        if (revisionTareasList.isNotEmpty) {
+                          agregarTarea = !revisionTareasList.any((tarea) => tarea.tareaId == selectedTarea.tareaId);
+                        }
+                        if (agregarTarea) {
+                          await posteoRevisionTarea(context);
+                          setState(() {});
+                        }
                       },
-                      text: 'Sincronizar',
+                      text: 'Agregar +',
                       tamano: 20,
                     ),
                   ],
                 ),
-              const SizedBox(height: 20,),
-              Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.6),
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: revisionTareasList.length,
-                  itemBuilder: (context, i) {
-                    final item = revisionTareasList[i];
-                    return Dismissible(
-                      key: Key(item.toString()),
-                      direction: DismissDirection.endToStart,
-                      confirmDismiss: (DismissDirection direction) async {
-                        bool isConnected = await _checkConnectivity();
-                        if(marcaId == 0){
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Marque entrada antes de ingresar datos.'),
-                          ));
-                          return Future.value(false);
-                        }
-                        return showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text("Confirmar"),
-                              content: const Text("¿Estas seguro de querer borrar la tarea?"),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                    Navigator.of(context).pop(false),
-                                  child: const Text("CANCELAR"),
-                                ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                  ),
-                                  onPressed: () async {
-                                    if(isConnected){
-                                      Navigator.of(context).pop(true);
-                                      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
-                                      await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
-                                    }else{
-                                      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                        content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
-                                      ));
-                                      router.pop(context);
-                                    }
-                                  },
-                                  child: const Text("BORRAR")
-                                ),
-                              ],
-                            );
+                const SizedBox(height: 20,),
+                Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.6),
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: revisionTareasList.length,
+                    itemBuilder: (context, i) {
+                      final item = revisionTareasList[i];
+                      return Dismissible(
+                        key: Key(item.toString()),
+                        direction: DismissDirection.endToStart,
+                        confirmDismiss: (DismissDirection direction) async {
+                          bool isConnected = await _checkConnectivity();
+                          if(marcaId == 0){
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Marque entrada antes de ingresar datos.'),
+                            ));
+                            return Future.value(false);
                           }
-                        );
-                      },
-                      onDismissed: (direction) async {
-                        setState(() {
-                          revisionTareasList.removeAt(i);
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('La tarea $item ha sido borrada'),
-                        ));
-                      },
-                      background: Container(
-                        color: Colors.red,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                      ),
-                      child: Container(
-                        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
-                        child: ListTile(
-                          title: Text(revisionTareasList[i].descripcion),
-                          trailing: IconButton(
-                            onPressed: () async {
-                              if(marcaId == 0){
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  content: Text('Marque entrada antes de ingresar datos.'),
-                                ));
-                                return Future.value(false);
-                              }
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Confirmar"),
-                                    content: const Text("¿Estas seguro de querer borrar la tarea?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => Navigator.of(context).pop(false),
-                                        child: const Text("CANCELAR"),
-                                      ),
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: Colors.red,
-                                        ),
-                                        onPressed: () async {
-                                          await borrarTarea(context, i);
-                                        },
-                                        child: const Text("BORRAR")
-                                      ),
-                                    ],
-                                  );
-                                }
+                          return showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Confirmar"),
+                                content: const Text("¿Estas seguro de querer borrar la tarea?"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                    child: const Text("CANCELAR"),
+                                  ),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    onPressed: () async {
+                                      if(isConnected){
+                                        Navigator.of(context).pop(true);
+                                        await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+                                        await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
+                                      }else{
+                                        await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
+                                        ));
+                                        router.pop(context);
+                                      }
+                                    },
+                                    child: const Text("BORRAR")
+                                  ),
+                                ],
                               );
-                            },
-                            icon: const Icon(Icons.delete)
+                            }
+                          );
+                        },
+                        onDismissed: (direction) async {
+                          setState(() {
+                            revisionTareasList.removeAt(i);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('La tarea $item ha sido borrada'),
+                          ));
+                        },
+                        background: Container(
+                          color: Colors.red,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.white,
                           ),
                         ),
-                      ),
-                    );
-                  },
+                        child: Container(
+                          decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
+                          child: ListTile(
+                            title: Text(revisionTareasList[i].descripcion),
+                            trailing: IconButton(
+                              onPressed: () async {
+                                if(marcaId == 0){
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text('Marque entrada antes de ingresar datos.'),
+                                  ));
+                                  return Future.value(false);
+                                }
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirmar"),
+                                      content: const Text("¿Estas seguro de querer borrar la tarea?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(false),
+                                          child: const Text("CANCELAR"),
+                                        ),
+                                        TextButton(
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red,
+                                          ),
+                                          onPressed: () async {
+                                            await borrarTarea(context, revisionTareasList[i]);
+                                          },
+                                          child: const Text("BORRAR")
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                );
+                              },
+                              icon: const Icon(Icons.delete)
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> borrarTarea(BuildContext context, int i) async {
+  Future<void> borrarTarea(BuildContext context, RevisionTarea tarea) async {
     bool isConnected = await _checkConnectivity();
     if(isConnected){
-      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
-      await RevisionServices().deleteRevisionTarea(context, orden, revisionTareasList[i], token);
+      RevisionTarea tareaABorrar = revision.revisionTarea.firstWhere((element) => element.otTareaId == tarea.otTareaId);
+      await RevisionServices().deleteRevisionTareaOffline(tareaABorrar, orden);
+      await RevisionServices().deleteRevisionTarea(context, orden, tarea, token);
     }else{
-      await RevisionServices().deleteRevisionTareaOffline(revisionTareasList[i], orden);
+      if(tarea.otTareaId == 0){
+        pendientesBox.delete(tarea.hiveKey);
+      } else {
+        Pendiente pendienteABorrar = Pendiente.empty();
+        pendienteABorrar.accion = 3;
+        pendienteABorrar.objeto = tarea;
+        pendienteABorrar.ordenId = orden.ordenTrabajoId;
+        pendienteABorrar.otRevisionId = orden.otRevisionId;
+        pendienteABorrar.tipo = 8;  
+      }
+      await RevisionServices().deleteRevisionTareaOffline(tarea, orden);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('La tarea ${revisionTareasList[i].descripcion} ha sido borrada'),
+        content: Text('La tarea ${tarea.descripcion} ha sido borrada'),
       ));
-      router.pop(context);
     }
-    revisionTareasList.removeAt(i);
+    router.pop(context);
     setState(() {});
   }
 
   Future<void> posteoRevisionTarea(BuildContext context) async {
     bool isConnected = await _checkConnectivity();
     Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    late Pendiente pendiente = Pendiente.empty();
     var nuevaTarea = RevisionTarea(
       otTareaId: 0,
       ordenTrabajoId: orden.ordenTrabajoId,
@@ -308,32 +304,29 @@ class _TareasPageState extends State<TareasPage> {
       codTarea: selectedTarea.codTarea,
       descripcion: selectedTarea.descripcion,
       comentario: '',
-      hiveKey: 0);
+      hiveKey: 0
+    );
+    pendiente.objeto = nuevaTarea;
+    pendiente.accion = 1;
+    pendiente.ordenId = orden.ordenTrabajoId;
+    pendiente.otRevisionId = orden.otRevisionId;
+    pendiente.tipo = 8;
 
     if(isConnected){
       revisionSeleccionada.revisionTarea.add(nuevaTarea);
       await RevisionServices().postRevisionTarea(context, orden, nuevaTarea, token);
-      revisionTareasList.add(nuevaTarea);
+      RevisionServices.showDialogs(context, 'Tarea guardada', false, false);
+      // revisionTareasList.add(nuevaTarea);
     }else{
       revisionSeleccionada.revisionTarea.add(nuevaTarea);
+      int hiveKeySelected = await addToBoxPendientes(pendiente);
+      Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+      objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
     }    
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 200,
       duration: const Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
-  }
-
-  Future<void> posteoDeBox(BuildContext context) async {
-    bool isConnected = await _checkConnectivity();
-    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-
-    for(int i = 0; i < revisionSeleccionada.revisionTarea.length; i++){
-      RevisionTarea tarea = revisionSeleccionada.revisionTarea[i];
-      if(tarea.otTareaId == 0){
-        await RevisionServices().postRevisionTarea(context, orden, tarea, token);
-      }
-    }
-    RevisionServices.showDialogs(context, 'Tarea Guardada', false, false);
   }
 }
