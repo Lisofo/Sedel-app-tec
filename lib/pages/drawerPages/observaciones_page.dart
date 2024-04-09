@@ -10,7 +10,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/pendiente.dart';
 import '../../models/revision.dart';
+import '../../offline/box_func.dart';
 
 class ObservacionesPage extends StatefulWidget {
   const ObservacionesPage({super.key});
@@ -75,84 +77,86 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-        title: Text(
-          '${orden.ordenTrabajoId} - Observaciones',
-          style: const TextStyle(color: Colors.white),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(
+          title: Text(
+            '${orden.ordenTrabajoId} - Observaciones',
+            style: const TextStyle(color: Colors.white),
+          ),
+          backgroundColor: const Color.fromARGB(255, 52, 120, 62),
         ),
-        backgroundColor: const Color.fromARGB(255, 52, 120, 62),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color.fromARGB(255, 52, 120, 62), width: 2),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: TextFormField(
-                  controller: observacionController,
-                  maxLines: 6,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Colors.white,
-                    filled: true
-                  ),
-                  enabled: marcaId != 0,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                'Comentario interno:',
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
                       color: const Color.fromARGB(255, 52, 120, 62), width: 2),
-                  borderRadius: BorderRadius.circular(5),
-                  // color: Colors.white
-                ),
-                child: TextFormField(
-                  controller: comentarioInternoController,
-                  maxLines: 6,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    fillColor: Colors.white,
-                    filled: true
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  enabled: marcaId != 0,
+                  child: TextFormField(
+                    controller: observacionController,
+                    maxLines: 6,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      fillColor: Colors.white,
+                      filled: true
+                    ),
+                    enabled: marcaId != 0,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: CustomButton(
-                  onPressed: () async {
-                    if(marcaId == 0){
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Marque entrada antes de ingresar datos.'),
-                      ));
-                      return Future.value(false);
-                    }
-                    await guardarObservaciones();
-                  },
-                  text: 'Guardar',
-                  tamano: 20,
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-            ],
+                const Text(
+                  'Comentario interno:',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 52, 120, 62), width: 2),
+                    borderRadius: BorderRadius.circular(5),
+                    // color: Colors.white
+                  ),
+                  child: TextFormField(
+                    controller: comentarioInternoController,
+                    maxLines: 6,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      fillColor: Colors.white,
+                      filled: true
+                    ),
+                    enabled: marcaId != 0,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: CustomButton(
+                    onPressed: () async {
+                      if(marcaId == 0){
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Marque entrada antes de ingresar datos.'),
+                        ));
+                        return Future.value(false);
+                      }
+                      await guardarObservaciones();
+                    },
+                    text: 'Guardar',
+                    tamano: 20,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -161,16 +165,31 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
 
   guardarObservaciones() async {
     bool isConnected = await _checkConnectivity();
+    Revision revisionSeleccionada = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
+    late Pendiente pendiente = Pendiente.empty();
     observacion.comentarioInterno = comentarioInternoController.text;
     observacion.observacion = observacionController.text;
     observacion.obsRestringida = observacionController.text;
+    pendiente.objeto = observacion;
+    pendiente.accion = observacion.otObservacionId == 0 ? 1 : 2;
+    pendiente.ordenId = orden.ordenTrabajoId;
+    pendiente.otRevisionId = orden.otRevisionId;
+    pendiente.tipo = 6;
+
+
+
     if(isConnected){
       if (observacion.otObservacionId == 0) {
-        revision.revisionObservacion[0] = observacion;
+        revisionSeleccionada.revisionObservacion[0] = observacion;
         await RevisionServices().postObservacion(context, orden, observacion, token);
       } else {
         await RevisionServices().putObservacion(context, orden, observacion, token);
       }
+    } else {
+        revisionSeleccionada.revisionObservacion[0] = observacion;
+        int hiveKeySelected = await addToBoxPendientes(pendiente);
+        Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+        objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
     }
     
   }

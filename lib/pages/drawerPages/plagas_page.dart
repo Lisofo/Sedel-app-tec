@@ -330,7 +330,7 @@ class _PlagasPageState extends State<PlagasPage> {
       await RevisionServices().deleteRevisionPlaga(context, orden, plaga, token);
     }else{
       if(plaga.otPlagaId == 0){
-       pendientesBox.delete(plaga.hiveKey);
+        pendientesBox.delete(plaga.hiveKey);
       } else {
         Pendiente pendienteABorrar = Pendiente.empty();
         pendienteABorrar.accion = 3;
