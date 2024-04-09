@@ -26,13 +26,14 @@ class ClienteFirmaAdapter extends TypeAdapter<ClienteFirma> {
       firmaMd5: fields[6] as String,
       comentario: fields[7] as String,
       firma: fields[8] as Uint8List?,
+      hiveKey: fields[9] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, ClienteFirma obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.otFirmaId)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class ClienteFirmaAdapter extends TypeAdapter<ClienteFirma> {
       ..writeByte(7)
       ..write(obj.comentario)
       ..writeByte(8)
-      ..write(obj.firma);
+      ..write(obj.firma)
+      ..writeByte(9)
+      ..write(obj.hiveKey);
   }
 
   @override

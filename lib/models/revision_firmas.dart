@@ -23,6 +23,8 @@ class RevisionFirmas extends HiveObject{
   late String firmaMd5;
   @HiveField(7)
   late String comentario;
+  @HiveField(8)
+  late int hiveKey;
 
   RevisionFirmas({
     required this.otFirmaId,
@@ -33,6 +35,7 @@ class RevisionFirmas extends HiveObject{
     required this.firmaPath,
     required this.firmaMd5,
     required this.comentario,
+    required this.hiveKey,
   });
 
   factory RevisionFirmas.fromJson(Map<String, dynamic> json) => RevisionFirmas(
@@ -44,6 +47,7 @@ class RevisionFirmas extends HiveObject{
         firmaPath: json["firmaPath"]as String? ?? '',
         firmaMd5: json["firmaMD5"]as String? ?? '',
         comentario: json["comentario"]as String? ?? '',
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -66,5 +70,6 @@ class RevisionFirmas extends HiveObject{
     firmaPath = '';
     firmaMd5 = '';
     comentario = '';
+    hiveKey = 0;
   }
 }

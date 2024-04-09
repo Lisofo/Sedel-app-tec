@@ -178,18 +178,46 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
 
 
 
+    if (revisionSeleccionada.revisionObservacion.isEmpty){
+        revisionSeleccionada.revisionObservacion.add(observacion);
+    }else {
+        revisionSeleccionada.revisionObservacion[0] = observacion;
+    }
+
     if(isConnected){
       if (observacion.otObservacionId == 0) {
-        revisionSeleccionada.revisionObservacion[0] = observacion;
         await RevisionServices().postObservacion(context, orden, observacion, token);
       } else {
         await RevisionServices().putObservacion(context, orden, observacion, token);
       }
-    } else {
-        revisionSeleccionada.revisionObservacion[0] = observacion;
-        int hiveKeySelected = await addToBoxPendientes(pendiente);
-        Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
-        objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+    }else{
+      
+      
+
+      if (observacion.otObservacionId == 0) {
+        if(observacion.hiveKey == 0){
+          //revisiones.values
+          //todo hacer post en box
+          int hiveKeySelected = await addToBoxPendientes(pendiente);
+          Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+          objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+        }else{
+          //todo hacer put en box y dejar mandado para la base de datos (put de objeto que ya exisitia, por eso la tiene Hivekey)
+        }
+  
+      } else {
+        List<dynamic> pendienteSeleccionadaList = pendientesBox.values.where((pendiente) => 
+        (pendiente.objeto.otObservacionId == observacion.otObservacionId && pendiente.accion == 2)).toList();
+        if(pendienteSeleccionadaList.isEmpty){
+          //todo poner un put comun
+        }else{
+          pendientesBox.delete(pendienteSeleccionadaList[0]);
+          //todo poner un put comun
+        }
+        //todo y editar en la box
+        
+      }
+      
     }
     
   }

@@ -25,13 +25,14 @@ class RevisionFirmasAdapter extends TypeAdapter<RevisionFirmas> {
       firmaPath: fields[5] as String,
       firmaMd5: fields[6] as String,
       comentario: fields[7] as String,
+      hiveKey: fields[8] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, RevisionFirmas obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.otFirmaId)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class RevisionFirmasAdapter extends TypeAdapter<RevisionFirmas> {
       ..writeByte(6)
       ..write(obj.firmaMd5)
       ..writeByte(7)
-      ..write(obj.comentario);
+      ..write(obj.comentario)
+      ..writeByte(8)
+      ..write(obj.hiveKey);
   }
 
   @override

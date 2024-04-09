@@ -23,13 +23,14 @@ class ObservacionAdapter extends TypeAdapter<Observacion> {
       observacion: fields[3] as String,
       obsRestringida: fields[4] as String,
       comentarioInterno: fields[5] as String,
+      hiveKey: fields[6] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Observacion obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.otObservacionId)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class ObservacionAdapter extends TypeAdapter<Observacion> {
       ..writeByte(4)
       ..write(obj.obsRestringida)
       ..writeByte(5)
-      ..write(obj.comentarioInterno);
+      ..write(obj.comentarioInterno)
+      ..writeByte(6)
+      ..write(obj.hiveKey);
   }
 
   @override

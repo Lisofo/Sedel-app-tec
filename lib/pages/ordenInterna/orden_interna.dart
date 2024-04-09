@@ -475,6 +475,9 @@ class _OrdenInternaState extends State<OrdenInterna> {
               break;
             }
           break;
+          case 6:
+           // switch(pendienteSeleccionada.accion)
+          break;
           case 7:
             switch (pendienteSeleccionada.accion){
               case 1:

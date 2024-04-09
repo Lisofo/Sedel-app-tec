@@ -19,6 +19,8 @@ class Observacion extends HiveObject{
   late String obsRestringida;
   @HiveField(5)
   late String comentarioInterno;
+  @HiveField(6)
+  late int hiveKey;
 
   Observacion({
     required this.otObservacionId,
@@ -27,6 +29,7 @@ class Observacion extends HiveObject{
     required this.observacion,
     required this.obsRestringida,
     required this.comentarioInterno,
+    required this.hiveKey,
   });
 
   factory Observacion.fromJson(Map<String, dynamic> json) => Observacion(
@@ -36,6 +39,7 @@ class Observacion extends HiveObject{
         observacion: json["observacion"] as String? ?? '',
         obsRestringida: json["obsRestringida"] as String? ?? '',
         comentarioInterno: json["comentarioInterno"] as String? ?? '',
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -54,5 +58,6 @@ class Observacion extends HiveObject{
     observacion = '';
     obsRestringida = '';
     comentarioInterno = '';
+    hiveKey = 0;
   }
 }

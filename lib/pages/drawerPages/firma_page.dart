@@ -56,6 +56,7 @@ class _FirmaState extends State<Firma> {
           otRevisionId: 0,
           firmaMd5: '',
           comentario: '',
+          hiveKey: 0,
         ));
 
         nameController.clear();
@@ -440,7 +441,8 @@ class _FirmaState extends State<Firma> {
       firmaPath: '',
       firmaMd5: md5Hash,
       comentario: '',
-      firma: exportedImage
+      firma: exportedImage,
+      hiveKey: 0,
     );
 
     if (isConnected) {
