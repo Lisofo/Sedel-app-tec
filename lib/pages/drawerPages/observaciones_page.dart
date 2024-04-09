@@ -179,9 +179,9 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
 
 
     if (revisionSeleccionada.revisionObservacion.isEmpty){
-        revisionSeleccionada.revisionObservacion.add(observacion);
+      revisionSeleccionada.revisionObservacion.add(observacion);
     }else {
-        revisionSeleccionada.revisionObservacion[0] = observacion;
+      revisionSeleccionada.revisionObservacion[0] = observacion;
     }
 
     if(isConnected){
@@ -191,18 +191,18 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
         await RevisionServices().putObservacion(context, orden, observacion, token);
       }
     }else{
-      
-      
 
       if (observacion.otObservacionId == 0) {
         if(observacion.hiveKey == 0){
-          //revisiones.values
-          //todo hacer post en box
           int hiveKeySelected = await addToBoxPendientes(pendiente);
           Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
           objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
         }else{
           //todo hacer put en box y dejar mandado para la base de datos (put de objeto que ya exisitia, por eso la tiene Hivekey)
+          Pendiente objetoPendienteSeleccionado = pendientesBox.get(observacion.hiveKey);
+          objetoPendienteSeleccionado.objeto.comentarioInterno = comentarioInternoController.text;
+          objetoPendienteSeleccionado.objeto.observacion = observacionController.text;
+          objetoPendienteSeleccionado.objeto.obsRestringida = observacionController.text;
         }
   
       } else {
