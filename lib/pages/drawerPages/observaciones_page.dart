@@ -175,7 +175,7 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
     pendiente.ordenId = orden.ordenTrabajoId;
     pendiente.otRevisionId = orden.otRevisionId;
     pendiente.tipo = 6;
-
+    Pendiente objetoPendienteSeleccionado = Pendiente.empty();
 
 
     if (revisionSeleccionada.revisionObservacion.isEmpty){
@@ -190,35 +190,30 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
       } else {
         await RevisionServices().putObservacion(context, orden, observacion, token);
       }
+      revisionSeleccionada.revisionObservacion[0] = observacion;
     }else{
-
       if (observacion.otObservacionId == 0) {
         if(observacion.hiveKey == 0){
           int hiveKeySelected = await addToBoxPendientes(pendiente);
-          Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+          objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
           objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+          
         }else{
-          //todo hacer put en box y dejar mandado para la base de datos (put de objeto que ya exisitia, por eso la tiene Hivekey)
-          Pendiente objetoPendienteSeleccionado = pendientesBox.get(observacion.hiveKey);
+          objetoPendienteSeleccionado = pendientesBox.get(observacion.hiveKey);
           objetoPendienteSeleccionado.objeto.comentarioInterno = comentarioInternoController.text;
           objetoPendienteSeleccionado.objeto.observacion = observacionController.text;
           objetoPendienteSeleccionado.objeto.obsRestringida = observacionController.text;
         }
-  
-      } else {
-        List<dynamic> pendienteSeleccionadaList = pendientesBox.values.where((pendiente) => 
-        (pendiente.objeto.otObservacionId == observacion.otObservacionId && pendiente.accion == 2)).toList();
-        if(pendienteSeleccionadaList.isEmpty){
-          //todo poner un put comun
-        }else{
-          pendientesBox.delete(pendienteSeleccionadaList[0]);
-          //todo poner un put comun
-        }
-        //todo y editar en la box
-        
-      }
-      
+      }else{
+          objetoPendienteSeleccionado = pendiente;
+          objetoPendienteSeleccionado.objeto.comentarioInterno = comentarioInternoController.text;
+          objetoPendienteSeleccionado.objeto.observacion = observacionController.text;
+          objetoPendienteSeleccionado.objeto.obsRestringida = observacionController.text;
+          await addToBoxPendientes(objetoPendienteSeleccionado);
+      } 
+      revisionSeleccionada.revisionObservacion[0] = objetoPendienteSeleccionado.objeto; 
     }
+    
     
   }
 }
