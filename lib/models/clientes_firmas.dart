@@ -28,6 +28,8 @@ class ClienteFirma extends HiveObject{
   late String comentario;
   @HiveField(8)
   late Uint8List? firma;
+  @HiveField(9)
+  late int hiveKey;
 
   ClienteFirma({
     required this.otFirmaId,
@@ -39,6 +41,7 @@ class ClienteFirma extends HiveObject{
     required this.firmaMd5,
     required this.comentario,
     required this.firma,
+    required this.hiveKey,
   });
 
   factory ClienteFirma.fromJson(Map<String, dynamic> json) => ClienteFirma(
@@ -51,6 +54,7 @@ class ClienteFirma extends HiveObject{
         firmaMd5: json["firmaMD5"],
         comentario: json["comentario"],
         firma: null,
+        hiveKey: 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -75,6 +79,7 @@ class ClienteFirma extends HiveObject{
     firmaMd5 = '';
     comentario = '';
     firma = null;
+    hiveKey = 0;
   }
 
   @override

@@ -475,6 +475,17 @@ class _OrdenInternaState extends State<OrdenInterna> {
               break;
             }
           break;
+          case 6:
+            switch(pendienteSeleccionada.accion){
+              case 1:
+                await RevisionServices().postObservacion(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+              case 2:
+                await RevisionServices().putObservacion(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+            }
+          break;
+          
           case 7:
             switch (pendienteSeleccionada.accion){
               case 1:

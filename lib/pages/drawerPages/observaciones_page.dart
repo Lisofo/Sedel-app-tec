@@ -175,22 +175,45 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
     pendiente.ordenId = orden.ordenTrabajoId;
     pendiente.otRevisionId = orden.otRevisionId;
     pendiente.tipo = 6;
+    Pendiente objetoPendienteSeleccionado = Pendiente.empty();
 
 
+    if (revisionSeleccionada.revisionObservacion.isEmpty){
+      revisionSeleccionada.revisionObservacion.add(observacion);
+    }else {
+      revisionSeleccionada.revisionObservacion[0] = observacion;
+    }
 
     if(isConnected){
       if (observacion.otObservacionId == 0) {
-        revisionSeleccionada.revisionObservacion[0] = observacion;
         await RevisionServices().postObservacion(context, orden, observacion, token);
       } else {
         await RevisionServices().putObservacion(context, orden, observacion, token);
       }
-    } else {
-        revisionSeleccionada.revisionObservacion[0] = observacion;
-        int hiveKeySelected = await addToBoxPendientes(pendiente);
-        Pendiente objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
-        objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+      revisionSeleccionada.revisionObservacion[0] = observacion;
+    }else{
+      if (observacion.otObservacionId == 0) {
+        if(observacion.hiveKey == 0){
+          int hiveKeySelected = await addToBoxPendientes(pendiente);
+          objetoPendienteSeleccionado = pendientesBox.get(hiveKeySelected);
+          objetoPendienteSeleccionado.objeto.hiveKey = hiveKeySelected;
+          
+        }else{
+          objetoPendienteSeleccionado = pendientesBox.get(observacion.hiveKey);
+          objetoPendienteSeleccionado.objeto.comentarioInterno = comentarioInternoController.text;
+          objetoPendienteSeleccionado.objeto.observacion = observacionController.text;
+          objetoPendienteSeleccionado.objeto.obsRestringida = observacionController.text;
+        }
+      }else{
+          objetoPendienteSeleccionado = pendiente;
+          objetoPendienteSeleccionado.objeto.comentarioInterno = comentarioInternoController.text;
+          objetoPendienteSeleccionado.objeto.observacion = observacionController.text;
+          objetoPendienteSeleccionado.objeto.obsRestringida = observacionController.text;
+          await addToBoxPendientes(objetoPendienteSeleccionado);
+      } 
+      revisionSeleccionada.revisionObservacion[0] = objetoPendienteSeleccionado.objeto; 
     }
+    
     
   }
 }

@@ -360,7 +360,7 @@ class RevisionServices {
   
   Future deleteRevisionPlagaOffline(RevisionPlaga revisionPlaga, Orden orden) async {
     Revision revision = revisiones.values.where((revision) => revision.otRevisionId == orden.otRevisionId).toList()[0];
-    revision.revisionPlaga.removeWhere((plaga) => plaga.plagaId == revisionPlaga.plagaId);
+    revision.revisionPlaga.remove((plaga) => plaga.plagaId == revisionPlaga.plagaId);
     print('Plaga eliminada con éxito');
  
   }
