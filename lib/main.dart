@@ -112,5 +112,5 @@ Future<void> cargarHive() async {
   revisiones = await Hive.openBox('revisionesBox');
   // revisiones.clear();
   pendientesBox = await Hive.openBox('boxPendientes');
-  pendientesBox.clear();
+  // pendientesBox.clear();
 }
