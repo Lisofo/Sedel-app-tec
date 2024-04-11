@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, void_checks
+// ignore_for_file: avoid_print, use_build_context_synchronously, void_checks, unrelated_type_equality_checks
 
 import 'package:app_tecnicos_sedel_wifiless/models/observacion.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
@@ -213,7 +213,5 @@ class _ObservacionesPageState extends State<ObservacionesPage> {
       } 
       revisionSeleccionada.revisionObservacion[0] = objetoPendienteSeleccionado.objeto; 
     }
-    
-    
   }
 }

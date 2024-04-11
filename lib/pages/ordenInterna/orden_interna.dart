@@ -461,6 +461,19 @@ class _OrdenInternaState extends State<OrdenInterna> {
       for(var i = 0; i < pendientesBox.length; i++){
         Pendiente pendienteSeleccionada = pendientesBox.getAt(i);
         switch (pendienteSeleccionada.tipo){
+          case 3:
+            switch (pendienteSeleccionada.accion) {
+              case 1:
+                await RevisionServices().postRevisonFirma(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+              case 2:
+                await RevisionServices().putRevisionFirma(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+              case 3:
+                await RevisionServices().deleteRevisionFirma(context, orden, pendienteSeleccionada.objeto, token);
+              break;
+            }
+          break;
           case 5:
             switch (pendienteSeleccionada.accion){
               case 1:

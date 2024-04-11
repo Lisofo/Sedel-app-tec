@@ -1,4 +1,4 @@
-// ignore_for_file: unused_element, unused_local_variable, avoid_print, use_build_context_synchronously
+// ignore_for_file: unused_element, unused_local_variable, avoid_print, use_build_context_synchronously, collection_methods_unrelated_type
 
 import 'package:app_tecnicos_sedel_wifiless/config/config.dart';
 import 'package:app_tecnicos_sedel_wifiless/config/router/router.dart';

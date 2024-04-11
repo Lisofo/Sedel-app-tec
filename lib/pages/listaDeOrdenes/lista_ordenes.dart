@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
 
 import 'package:app_tecnicos_sedel_wifiless/offline/box_func.dart';
 import 'package:app_tecnicos_sedel_wifiless/offline/boxes.dart';

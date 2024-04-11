@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, use_build_context_synchronously, avoid_print, void_checks
+// ignore_for_file: file_names, use_build_context_synchronously, avoid_print, void_checks, unrelated_type_equality_checks
 
 import 'package:app_tecnicos_sedel_wifiless/models/orden.dart';
 import 'package:app_tecnicos_sedel_wifiless/models/plaga_objetivo.dart';
