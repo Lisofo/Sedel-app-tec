@@ -228,20 +228,21 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
                     ),
                   ),
                   Switch(
-                      activeColor: const Color.fromARGB(255, 52, 120, 62),
-                      value: filtro,
-                      onChanged: (value) {
-                        setState(() {
-                          filtro = value;
-                          pendientes = filtro;
-                          Provider.of<OrdenProvider>(context, listen: false).setPendiente(pendientes);
-                          selectAll = false;
-                          for (var i = 0; i < ptosFiltrados.length; i++) {
-                            ptosFiltrados[i].seleccionado = false;
-                          }
-                          listaDePuntos();
-                        });
-                      }),
+                    activeColor: const Color.fromARGB(255, 52, 120, 62),
+                    value: filtro,
+                    onChanged: (value) {
+                      setState(() {
+                        filtro = value;
+                        pendientes = filtro;
+                        Provider.of<OrdenProvider>(context, listen: false).setPendiente(pendientes);
+                        selectAll = false;
+                        for (var i = 0; i < ptosFiltrados.length; i++) {
+                          ptosFiltrados[i].seleccionado = false;
+                        }
+                        listaDePuntos();
+                      });
+                    }
+                  ),
                   const Spacer(),
                   Checkbox(
                     activeColor: const Color.fromARGB(255, 52, 120, 62),
