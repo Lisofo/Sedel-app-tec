@@ -48,20 +48,16 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
   bool pendientes = false;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
   late Revision revision = Revision.empty();
+  String _searchTerm = '';
 
   readQRCode() async {
+    ptosInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, orden, token);
     String code = await FlutterBarcodeScanner.scanBarcode('#FFFFFF', 'Cancelar', false, ScanMode.QR);
-    /*context.read<ItemProvider>().setItem(code);
-    var products = widget.products;
-    final prodPP =
-        products.firstWhere((element) => element.codItem == code, orElse: () {
-      return Product.empty();
-    });
-    context.read<ItemProvider>().setProduct(prodPP);*/
+    print('el codigo escaneado es $code');
     if (code == '') {
       return null;
     } else {
-      _mostrarBottomSheet();
+      Provider.of<OrdenProvider>(context, listen: false).filtrarPuntosInspeccion2(code);
     }
   }
 
@@ -150,8 +146,41 @@ class _PtosInspeccionPageState extends State<PtosInspeccionPage> {
               icon: const Icon(Icons.qr_code_scanner_rounded),
               color: Colors.white,
             ),
-            const SizedBox(
-              width: 10,
+            const SizedBox(width: 10,),
+            IconButton(
+              onPressed: () async {
+                ptosInspeccion = await PtosInspeccionServices().getPtosInspeccion(context, orden, token);
+                await showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Buscar Puntos de Inspección"),
+                    content: CustomTextFormField(
+                      onChanged: (value) {
+                        setState(() {
+                          _searchTerm = value;
+                        });
+                      },
+                      hint: "Ingrese el término de búsqueda",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Cancelar"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Provider.of<OrdenProvider>(context, listen: false).filtrarPuntosInspeccion1(_searchTerm);
+                          Navigator.pop(context);
+                        },
+                        child: const Text("Buscar"),
+                      ),
+                    ],
+                  ),
+                );
+              }, 
+              icon: const Icon(Icons.search)
             )
           ],
         ),

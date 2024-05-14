@@ -44,7 +44,7 @@ class OrdenProvider with ChangeNotifier {
             : element.codAccion == element.codAccion)
         .toList();
   }
-
+  List<RevisionPtoInspeccion> get _ptosInspeccionCompleta => listaPuntos;
   RevisionPtoInspeccion get revisionPtoInspeccion => _revisionPtoInspeccion;
   String get modo => _modo;
   int get tecnicoId => _tecnicoId;
@@ -123,4 +123,15 @@ class OrdenProvider with ChangeNotifier {
   void setOrdenes(List<Orden> ordenes) {
     ordenesEnProceso = ordenes;
   }
+
+  void filtrarPuntosInspeccion1(String criterio) {
+    _ptosInspeccion = _ptosInspeccionCompleta.where((pto) => pto.codPuntoInspeccion.contains(criterio)).toList();
+    notifyListeners();
+  }
+
+  void filtrarPuntosInspeccion2(String criterio) {
+    _ptosInspeccion = _ptosInspeccionCompleta.where((pto) => pto.codigoBarra.contains(criterio)).toList();
+    notifyListeners();
+  }
+
 }
